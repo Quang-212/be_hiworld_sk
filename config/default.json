@@ -1,0 +1,47 @@
+{
+  "host": "localhost",
+  "port": 3040,
+  "public": "../public/",
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "authentication": {
+    "entity": "user",
+    "service": "users",
+    "secret": "SECRET_ACCESS_TOKEN",
+    "authStrategies": ["jwt", "local"],
+    "jwtOptions": {
+      "header": {
+        "typ": "access"
+      },
+      "audience": "https://yourdomain.com",
+      "issuer": "feathers",
+      "algorithm": "HS256",
+      "expiresIn": "20m"
+    },
+    "local": {
+      "usernameField": "email",
+      "passwordField": "password"
+    },
+    "oauth": {
+      "redirect": "CLIENT_URL",
+      "auth0": {
+        "key": "<auth0 oauth key>",
+        "secret": "<auth0 oauth secret>",
+        "subdomain": "<auth0 subdomain>",
+        "scope": ["profile", "openid", "email"]
+      },
+      "google": {
+        "key": "GOOGLE_CLIENT_ID",
+        "secret": "GOOGLE_CLIENT_SECRET",
+        "scope": ["email", "profile", "openid"]
+      },
+      "facebook": {
+        "key": "<facebook oauth key>",
+        "secret": "<facebook oauth secret>"
+      }
+    }
+  },
+  "mongodb": "DATABASE_MONGODB_URL"
+}

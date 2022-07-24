@@ -1,0 +1,73 @@
+{
+  "name": "be-hiworld",
+  "description": "",
+  "version": "0.0.0",
+  "homepage": "",
+  "private": true,
+  "main": "src",
+  "keywords": [
+    "feathers"
+  ],
+  "author": {
+    "name": "quang.nv212",
+    "email": "95917117+Quang-212@users.noreply.github.com"
+  },
+  "contributors": [],
+  "bugs": {},
+  "directories": {
+    "lib": "src",
+    "test": "test/",
+    "config": "config/"
+  },
+  "engines": {
+    "node": "^16.0.0",
+    "yarn": ">= 0.18.0"
+  },
+  "scripts": {
+    "test": "yarn run lint && yarn run jest",
+    "lint": "standard",
+    "dev": "nodemon src/",
+    "start": "node src/",
+    "jest": "jest --forceExit"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ],
+    "ignore": []
+  },
+  "dependencies": {
+    "@feathersjs/authentication": "^4.5.11",
+    "@feathersjs/authentication-local": "^4.5.11",
+    "@feathersjs/authentication-oauth": "^4.5.11",
+    "@feathersjs/configuration": "^4.5.11",
+    "@feathersjs/errors": "^4.5.15",
+    "@feathersjs/express": "^4.5.11",
+    "@feathersjs/feathers": "^4.5.11",
+    "@feathersjs/socketio": "^4.5.11",
+    "@feathersjs/transport-commons": "^4.5.15",
+    "cloudinary": "^1.30.1",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "feathers-hooks-common": "^6.1.3",
+    "feathers-mongoose": "^8.5.1",
+    "googleapis": "^105.0.0",
+    "helmet": "^4.6.0",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
+    "mongodb-core": "^3.2.7",
+    "mongoose": "^6.1.4",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.7.7",
+    "redis": "^4.2.0",
+    "serve-favicon": "^2.5.0",
+    "winston": "^3.0.0"
+  },
+  "devDependencies": {
+    "axios": "^0.27.2",
+    "jest": "^28.1.3",
+    "nodemon": "^2.0.15",
+    "standard": "^17.0.0"
+  }
+}
