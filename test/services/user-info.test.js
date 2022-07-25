@@ -1,8 +1,8 @@
 const app = require('../../src/app');
 
-describe('\'course-meta\' service', () => {
+describe('\'user-info\' service', () => {
   it('registered the service', () => {
-    const service = app.service('course-meta');
+    const service = app.service('user-info');
     expect(service).toBeTruthy();
   });
 });

@@ -1,30 +1,32 @@
-// users-model.js - A mongoose model
+// user-info-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
-
-const { Schema } = require("mongoose");
-
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "users";
+  const modelName = "userInfo";
   const mongooseClient = app.get("mongooseClient");
-  const schema = new mongooseClient.Schema(
+  const { Schema } = mongooseClient;
+  const schema = new Schema(
     {
-      googleId: { type: String, default: "" },
-      facebookId: { type: String, default: "" },
-      firstName: { type: String, required: true, lowercase: true },
-      lastName: { type: String, required: true, lowercase: true },
-      profilePhoto: {
+      userId: { type: Schema.Types.ObjectId, required: true },
+      coverPhoto: {
         url: { type: String, default: "" },
         id: { type: String, default: "" },
       },
-      email: { type: String, lowercase: true, unique: true },
-      password: {
-        type: String,
-        required: true,
-        default: process.env.DEFAULT_OAUTH_PASSWORD,
+      phone: { type: Number, default: -1 },
+      gender: { type: String, enum: ["male", "female"] },
+      workAt: {
+        career: { type: String },
+        company: { type: String },
       },
-      role: { type: String, required: true, default: "newbie" },
+      address: { type: String },
+      socialLink: [
+        {
+          provider: { type: String },
+          link: { type: String },
+        },
+      ],
+      deleted: { type: Boolean, default: false },
     },
     {
       timestamps: true,

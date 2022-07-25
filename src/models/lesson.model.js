@@ -15,18 +15,15 @@ module.exports = function (app) {
         required: true,
       },
       order: { type: Number, required: true },
-      type: {
-        type: String,
-        enum: ["video", "docs", "code", "quiz"],
-        required: true,
-        default: "video",
-      },
       slug: { type: String, required: true },
       description: { type: String, required: true },
+      videoLink: { type: String, required: true, default: "" },
+      content: { type: String, required: true }, //document content
       thumbnail: {
         url: { type: String, required: true, default: "" },
         id: { type: String, required: true, default: "" },
       },
+      deleted: { type: Boolean, default: false },
     },
     {
       timestamps: true,

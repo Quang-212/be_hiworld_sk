@@ -19,10 +19,8 @@ const channels = require("./channels");
 const authentication = require("./authentication");
 
 const mongoose = require("./mongoose");
-const client = require("./redis");
 
 const app = express(feathers());
-(async () => await client.connect())();
 
 // Load app configuration
 app.configure(configuration());

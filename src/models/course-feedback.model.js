@@ -1,16 +1,18 @@
-// course-comment-model.js - A mongoose model
+// course-feedback-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "courseComment";
+  const modelName = "courseFeedback";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
       userId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
       courseId: { type: Schema.Types.ObjectId, required: true },
-      text: { type: String, required: true },
+      comment: { type: String, required: true },
+      rating: { type: Number, required: true },
+      reply: { type: String, default: null },
     },
     {
       timestamps: true,

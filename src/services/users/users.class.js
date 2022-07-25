@@ -20,12 +20,12 @@ const isAdmin = (params) => {
   }
   return false;
 };
-const isAuthenticated = async (params, authService, data) => {
+const isAuthenticated = async (params, authService, id) => {
   if (params?.authentication && params?.authentication.accessToken) {
     const userId = await authService.verifyAccessToken(
       params?.authentication?.accessToken
     );
-    if (userId && userId.sub === data?._id) {
+    if (userId && userId.sub === id.toString()) {
       return true;
     }
     return { code: 403 };
@@ -38,7 +38,9 @@ exports.Users = class Users extends Service {
   }
   async create(data, params) {
     if (data?.googleId || data?.facebookId) {
-      return await super.create(data, params);
+      const newUser = await super.create(data, params);
+      await this.app.service("user-info").create({ userId: newUser._id });
+      return newUser;
     }
     const { email } = data;
     try {
@@ -68,7 +70,11 @@ exports.Users = class Users extends Service {
             new Error("Mã xác thực của bạn không đúng hoặc đã hết hạn!")
           );
         }
-        return await super.create(data, params);
+        const newUser = await super.create(data, params);
+        await this.app
+          .service("user-info")
+          .create({ userId: newUser._id, gender: data.gender });
+        return newUser;
       }
     } catch (error) {
       return new GeneralError(
@@ -79,48 +85,48 @@ exports.Users = class Users extends Service {
       );
     }
   }
-  //   async patch(id, data, params) {
-  //     const authService = new AuthenticationService(this.app);
+  async patch(id, data, params) {
+    const authService = new AuthenticationService(this.app);
 
-  //     if (data?.googleId || data?.facebookId) {
-  //       return await super.patch(id, data, params);
-  //     }
-  //     const { email } = data;
-  //     try {
-  //       if (isAdmin(params)) {
-  //         return await super.patch(id, data, params);
-  //       }
+    if (data?.googleId || data?.facebookId) {
+      return await super.patch(id, data, params);
+    }
+    const { email } = data;
+    try {
+      if (isAdmin(params)) {
+        return await super.patch(id, data, params);
+      }
 
-  //       if ((await isAuthenticated(params, authService, data))?.code) {
-  //         return new Forbidden(
-  //           "Bạn không được phép chỉnh sửa hồ sơ của người khác",
-  //           "block-by-cross-action"
-  //         );
-  //       } else if (await isAuthenticated(params, authService, data)) {
-  //         return await super.patch(id, data, params);
-  //       }
+      if ((await isAuthenticated(params, authService, id))?.code) {
+        return new Forbidden(
+          "Bạn không được phép chỉnh sửa hồ sơ của người khác",
+          "block-by-cross-action"
+        );
+      } else if (await isAuthenticated(params, authService, id)) {
+        return await super.patch(id, data, params);
+      }
 
-  //       if (queryChecking(params, "checking")) {
-  //         const existEmail = await this.Model.find({ email });
-  //         if (existEmail[0] === undefined) {
-  //           return new NotFound("Người dùng không tồn tại trong hệ thống!");
-  //         }
-  //         return "Redirect to verify page";
-  //       } else {
-  //         const aliveCode = client.get(email);
-  //         if (!aliveCode) {
-  //           return new Timeout("Mã xác thực của bạn không đúng hoặc đã hết hạn!");
-  //         }
-  //         if (queryChecking(params, "verify")) {
-  //           return "Redirect to new password page.";
-  //         } else {
-  //           return await super.patch(id, data, params);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       return new GeneralError(
-  //         new Error(error || "Xảy ra lỗi hệ thống - Server - Patch - User")
-  //       );
-  //     }
-  //   }
+      if (queryChecking(params, "checking")) {
+        const existEmail = await this.Model.find({ email });
+        if (existEmail[0] === undefined) {
+          return new NotFound("Người dùng không tồn tại trong hệ thống!");
+        }
+        return "Redirect to verify page";
+      } else {
+        const aliveCode = client.get(email);
+        if (!aliveCode) {
+          return new Timeout("Mã xác thực của bạn không đúng hoặc đã hết hạn!");
+        }
+        if (queryChecking(params, "verify")) {
+          return "Redirect to new password page.";
+        } else {
+          return await super.patch(id, data, params);
+        }
+      }
+    } catch (error) {
+      return new GeneralError(
+        new Error(error || "Xảy ra lỗi hệ thống - Server - Patch - User")
+      );
+    }
+  }
 };

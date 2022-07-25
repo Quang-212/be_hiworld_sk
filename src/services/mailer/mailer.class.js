@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const codeContent = require("../../mail-verify");
-const client = require("../../redis");
+const redis = require("../../redis");
 
 exports.Mailer = class Mailer {
   constructor(options) {
@@ -44,7 +44,7 @@ exports.Mailer = class Mailer {
         subject: "Verify message from Education web app",
         html: codeVerifyContent,
       });
-      return await client.set(email, code, { EX: 60 * 10 });
+      return await redis.set(email, code, "EX", 60 * 10);
     } catch (err) {
       return err;
     }

@@ -1,8 +1,5 @@
-const { model } = require("mongoose");
-const { createClient } = require("redis");
+const Redis = require("ioredis");
 
-const client = createClient();
-
-client.on("error", (err) => console.log("Redis Client Error", err));
-
-module.exports = client;
+const redis = new Redis();
+//configured to use redis as a cache
+module.exports = redis;

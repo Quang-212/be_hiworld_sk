@@ -1,28 +1,25 @@
-// course-category-model.js - A mongoose model
+// exercise-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "courseCategory";
+  const modelName = "exercise";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      name: { type: String, required: true, lowercase: true },
-      parentId: {
-        type: Schema.Types.ObjectId,
-        ref: "courseCategory",
-        default: null,
-      },
-      slug: { type: String, required: true, lowercase: true },
-      deleted: { type: Boolean, default: false },
+      title: { type: String, required: true },
+      type: { type: String, enum: ["coding", "quiz"], required: true },
+      requirement: { type: String, required: true },
+      codeRules: { type: String },
+      options: { type: Array },
+      result: { type: String, required: true },
     },
     {
       timestamps: true,
     }
   );
 
-  schema.index({ name: "text" });
   // This is necessary to avoid model compilation errors in watch mode
   // see https://mongoosejs.com/docs/api/connection.html#connection_Connection-deleteModel
   if (mongooseClient.modelNames().includes(modelName)) {

@@ -8,7 +8,7 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      title: { type: String, required: true, lowwerCase: true },
+      title: { type: String, required: true, lowerCase: true },
       subTitle: { type: String, required: true },
       slug: { type: String, required: true },
       category: {
@@ -21,7 +21,6 @@ module.exports = function (app) {
         url: { type: String, require: true },
         id: { type: String, require: true },
       },
-      meta: { type: Schema.Types.ObjectId, ref: "courseMeta" },
       level: {
         type: String,
         enum: {
@@ -30,8 +29,9 @@ module.exports = function (app) {
         },
         required: true,
       },
+      register: { type: Number, default: 0 },
+      share: { type: Number, default: 0 },
       deleted: { type: Boolean, default: false },
-      deleteId: { type: Schema.Types.ObjectId, default: null },
     },
     {
       timestamps: true,

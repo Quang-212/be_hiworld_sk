@@ -13,16 +13,21 @@ module.exports = function (app) {
     {
       requestId: { type: Schema.Types.ObjectId, ref: "users", required: true },
       receiveId: { type: Schema.Types.ObjectId, ref: "users", required: true },
+      isFollowing: { type: Boolean, default: false },
       status: {
         type: String,
-        enum: ["pending", "accepted"],
+        enum: ["pending", "accepted", "rejected", "blocked"],
         default: "pending",
       },
-      rejected: { type: Date },
       relationship: {
         type: String,
-        enum: ["friend", "family", "colleague", "lover", "other"],
-        default: "friend",
+        enum: ["unknown", "friend", "family", "colleague", "lover"],
+        default: "unknown",
+      },
+      priority: {
+        type: String,
+        enum: ["restrict", "normal", "favorite", "important"],
+        default: "normal",
       },
     },
     {

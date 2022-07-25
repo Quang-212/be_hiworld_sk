@@ -80,6 +80,7 @@ class MyLocalStrategy extends LocalStrategy {
 }
 class MyAuthenticationService extends AuthenticationService {
   async getPayload(authResults, params) {
+    console.log(authResults);
     const basePayload = await super.getPayload(authResults, params);
     console.log(basePayload);
     const { user } = authResults;

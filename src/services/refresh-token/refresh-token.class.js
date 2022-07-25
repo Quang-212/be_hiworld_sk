@@ -4,7 +4,7 @@ const { GeneralError } = require("@feathersjs/errors");
 const { queryChecking } = require("../../utils/query-checking");
 const getRefreshToken = require("../../utils/get-refresh-token");
 const { NotAuthenticated } = require("../../lib/error-handling");
-const client = require("../../redis");
+const redis = require("../../redis");
 exports.RefreshToken = class RefreshToken {
   constructor(options) {
     this.options = options || {};
@@ -42,11 +42,11 @@ exports.RefreshToken = class RefreshToken {
       };
       const newRefreshToken = await signRefreshToken();
       if (queryChecking(params, "login")) {
-        await client.set(_id, newRefreshToken, { EX: 3600 * 24 * 365 });
+        await redis.set(_id, newRefreshToken, "EX", 3600 * 24 * 365);
         return "Created refresh token";
       } else {
         const refreshToken = getRefreshToken(params);
-        const existRefreshToken = await client.get(_id);
+        const existRefreshToken = await redis.get(_id);
         if (existRefreshToken && existRefreshToken === refreshToken) {
           const payload = await authService.verifyAccessToken(
             refreshToken,
@@ -76,7 +76,7 @@ exports.RefreshToken = class RefreshToken {
   }
   async remove(id, params) {
     try {
-      await client.del(params.user._id.toString());
+      await redis.del(params.user._id.toString());
       return "Deleted refresh token";
     } catch (error) {
       return new GeneralError(new Error(error || "Lỗi hệ thống!"));
