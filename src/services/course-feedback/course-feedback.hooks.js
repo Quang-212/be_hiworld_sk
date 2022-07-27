@@ -1,14 +1,16 @@
-const { authenticate } = require('@feathersjs/authentication').hooks;
-
+const { authenticate } = require("@feathersjs/authentication").hooks;
+const { disablePagination } = require("feathers-hooks-common");
+const search = require("../../lib/mongoose-fuzzy-search");
+const adminChecking = require("../../middleware/adminChecking");
 module.exports = {
   before: {
-    all: [ authenticate('jwt') ],
-    find: [],
+    all: [],
+    find: [disablePagination(), search],
     get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: []
+    create: [authenticate("jwt")],
+    update: [authenticate("jwt")],
+    patch: [authenticate("jwt")],
+    remove: [authenticate("jwt")],
   },
 
   after: {
@@ -18,7 +20,7 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -28,6 +30,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };

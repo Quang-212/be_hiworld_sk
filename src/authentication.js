@@ -7,23 +7,13 @@ const {
   expressOauth,
   OAuthStrategy,
 } = require("@feathersjs/authentication-oauth");
+const { Exist409 } = require("./lib/error-handling");
 
 const existAccountChecking = (rawUserData) => {
   return (
     rawUserData !== undefined &&
     rawUserData?.password === process.env.DEFAULT_OAUTH_PASSWORD
   );
-};
-const OauthFlag = () => {
-  let flag = false;
-  return {
-    getFlag: () => {
-      return flag;
-    },
-    setFlag: (data) => {
-      flag = !!data;
-    },
-  };
 };
 
 class GoogleStrategy extends OAuthStrategy {
@@ -80,32 +70,20 @@ class MyLocalStrategy extends LocalStrategy {
 }
 class MyAuthenticationService extends AuthenticationService {
   async getPayload(authResults, params) {
-    console.log(authResults);
     const basePayload = await super.getPayload(authResults, params);
-    console.log(basePayload);
     const { user } = authResults;
     if (user) {
-      const sub = user._id.toString();
       return {
         ...basePayload,
         role: user?.role,
-        sub,
       };
-    } else {
-      return basePayload;
     }
-  }
-  async createAccessToken(payload) {
-    if (OauthFlag().getFlag()) {
-      return "exist_entity--no_token_response";
-    }
-    return super.createAccessToken(payload);
+    return basePayload;
   }
   async authenticate(data, params, ...strategies) {
     const authResult = await super.authenticate(data, params, ...strategies);
     if (existAccountChecking(authResult)) {
-      OauthFlag().setFlag(true);
-      return new Exist409("Redirect to Oauth page");
+      throw new Exist409("Redirect to Oauth page");
     }
     return authResult;
   }

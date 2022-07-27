@@ -1,16 +1,18 @@
+const { softDelete, disablePagination } = require("feathers-hooks-common");
+const search = require("../../lib/mongoose-fuzzy-search");
 const adminChecking = require("../../middleware/adminChecking");
 const rootChecking = require("../../middleware/rootChecking");
 const { authenticate } = require("@feathersjs/authentication").hooks;
 
 module.exports = {
   before: {
-    all: [],
-    find: [authenticate("jwt"), adminChecking],
-    get: [authenticate("jwt"), adminChecking],
-    create: [authenticate("jwt"), rootChecking],
-    update: [authenticate("jwt"), rootChecking],
-    patch: [authenticate("jwt"), rootChecking],
-    remove: [authenticate("jwt"), rootChecking],
+    all: [softDelete(), authenticate("jwt")],
+    find: [disablePagination(), adminChecking, search],
+    get: [adminChecking],
+    create: [rootChecking],
+    update: [rootChecking],
+    patch: [rootChecking],
+    remove: [rootChecking],
   },
 
   after: {

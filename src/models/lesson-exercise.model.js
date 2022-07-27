@@ -1,16 +1,17 @@
-// user-course-model.js - A mongoose model
+// lesson-exercise-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "userCourse";
+  const modelName = "lessonExercise";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      userId: { type: Schema.Types.ObjectId, required: true },
-      courseId: { type: Schema.Types.ObjectId, required: true },
-      position: { type: Number, default: 0 }, // lesson position in the course
+      lessonId: { type: Schema.Types.ObjectId, required: true },
+      exerciseId: { type: Schema.Types.ObjectId, required: true },
+      order: { type: Number, required: true, default: 0 }, // exercise order in the lesson
+      deleted: { type: Boolean, default: false },
     },
     {
       timestamps: true,

@@ -5,13 +5,13 @@ const adminChecking = require("../../middleware/adminChecking");
 
 module.exports = {
   before: {
-    all: [],
+    all: [softDelete()],
     find: [disablePagination(), search],
     get: [authenticate("jwt"), adminChecking],
     create: [authenticate("jwt"), adminChecking],
     update: [authenticate("jwt"), adminChecking],
     patch: [authenticate("jwt"), adminChecking],
-    remove: [authenticate("jwt"), adminChecking, softDelete()],
+    remove: [authenticate("jwt"), adminChecking],
   },
 
   after: {

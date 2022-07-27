@@ -22,10 +22,10 @@ const isAdmin = (params) => {
 };
 const isAuthenticated = async (params, authService, id) => {
   if (params?.authentication && params?.authentication.accessToken) {
-    const userId = await authService.verifyAccessToken(
+    const payload = await authService.verifyAccessToken(
       params?.authentication?.accessToken
     );
-    if (userId && userId.sub === id.toString()) {
+    if (payload && payload.sub === id.toString()) {
       return true;
     }
     return { code: 403 };

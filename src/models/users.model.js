@@ -25,6 +25,7 @@ module.exports = function (app) {
         default: process.env.DEFAULT_OAUTH_PASSWORD,
       },
       role: { type: String, required: true, default: "newbie" },
+      deleted: { type: Boolean, default: false },
     },
     {
       timestamps: true,

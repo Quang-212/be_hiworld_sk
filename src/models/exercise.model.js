@@ -8,12 +8,15 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      title: { type: String, required: true },
+      name: { type: String, required: true },
+      slug: { type: String, required: true },
+      difficulty: { type: Number, required: true },
       type: { type: String, enum: ["coding", "quiz"], required: true },
       requirement: { type: String, required: true },
       codeRules: { type: String },
       options: { type: Array },
       result: { type: String, required: true },
+      deleted: { type: Boolean, default: false },
     },
     {
       timestamps: true,

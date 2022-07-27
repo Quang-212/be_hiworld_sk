@@ -7,7 +7,7 @@ module.exports = {
   before: {
     all: [softDelete()],
     find: [disablePagination(), search],
-    get: [],
+    get: [authenticate("jwt")],
     create: [authenticate("jwt"), adminChecking],
     update: [authenticate("jwt"), adminChecking],
     patch: [authenticate("jwt"), adminChecking],

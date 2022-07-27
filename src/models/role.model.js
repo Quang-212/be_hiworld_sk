@@ -10,6 +10,7 @@ module.exports = function (app) {
     {
       name: { type: String, required: true, default: "newbie" },
       priority: { type: Number, required: true, default: 0 },
+      deleted: { type: Boolean, default: false },
     },
     {
       timestamps: true,

@@ -29,8 +29,8 @@ module.exports = function (app) {
         },
         required: true,
       },
-      register: { type: Number, default: 0 },
-      share: { type: Number, default: 0 },
+      register: { type: Number, required: true, default: 0 },
+      share: { type: Number, required: true, default: 0 },
       deleted: { type: Boolean, default: false },
     },
     {

@@ -17,11 +17,11 @@ module.exports = function (app) {
       order: { type: Number, required: true },
       slug: { type: String, required: true },
       description: { type: String, required: true },
-      videoLink: { type: String, required: true, default: "" },
+      videoLink: { type: String },
       content: { type: String, required: true }, //document content
       thumbnail: {
-        url: { type: String, required: true, default: "" },
-        id: { type: String, required: true, default: "" },
+        url: { type: String },
+        id: { type: String },
       },
       deleted: { type: Boolean, default: false },
     },

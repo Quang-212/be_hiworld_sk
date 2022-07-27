@@ -15,8 +15,8 @@ module.exports = function (app) {
     async (req, res, next) => {
       try {
         if (
-          res.hook.params.query?.logout?.toLowerCase() &&
-          JSON.parse(res.hook.params.query?.logout?.toLowerCase())
+          res.hook.params.query?.logout &&
+          JSON.parse(res.hook.params.query?.logout)
         ) {
           res.clearCookie("refreshToken");
           return next();
