@@ -37,7 +37,7 @@ class GoogleStrategy extends OAuthStrategy {
   }
   async findEntity(profile, params) {
     const entity = await super.findEntity(profile, params);
-    params.existUser = entity;
+    params.existUser = !!entity;
     return entity;
   }
   async updateEntity(entity, profile, params) {

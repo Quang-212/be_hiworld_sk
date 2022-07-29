@@ -6,8 +6,8 @@ exports.LessonExercise = class LessonExercise extends Service {
   }
   async create(data, params) {
     const { lessonId, order } = data;
-    const newExercise = await this.app.service("exercise").create(data);
-    await super.create(
+    const newExercise = await this.app.service("exercise").create(data, params);
+    const lessonExercise = await super.create(
       {
         lessonId,
         exerciseId: newExercise._id.toString(),
@@ -15,15 +15,23 @@ exports.LessonExercise = class LessonExercise extends Service {
       },
       params
     );
-    return newExercise;
+    return {
+      ...lessonExercise,
+      lessonId: await this.app.service("lesson").get(lessonId, params),
+      exerciseId: newExercise,
+    };
   }
   async patch(id, data, params) {
-    const { exerciseId } = params.query;
-    await Promise.all([
+    const { exerciseId, lessonId } = params.query;
+    const [exercise, lessonExercise] = await Promise.all([
       this.app.service("exercise").patch(exerciseId, data, params),
       super.patch(id, data, params),
     ]);
-    return "Cập nhật bài tập thành công";
+    return {
+      ...lessonExercise,
+      lessonId: await this.app.service("lesson").get(lessonId, params),
+      exerciseId: exercise,
+    };
   }
   async remove(id, params) {
     const { exerciseId } = params.query;

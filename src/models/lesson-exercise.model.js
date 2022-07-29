@@ -8,8 +8,12 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      lessonId: { type: Schema.Types.ObjectId, required: true },
-      exerciseId: { type: Schema.Types.ObjectId, required: true },
+      lessonId: { type: Schema.Types.ObjectId, required: true, ref: "lesson" },
+      exerciseId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "exercise",
+      },
       order: { type: Number, required: true, default: 0 }, // exercise order in the lesson
       deleted: { type: Boolean, default: false },
     },

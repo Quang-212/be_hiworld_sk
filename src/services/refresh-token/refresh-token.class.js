@@ -2,7 +2,7 @@
 const { AuthenticationService } = require("@feathersjs/authentication");
 const { GeneralError } = require("@feathersjs/errors");
 const { queryChecking } = require("../../utils/query-checking");
-const getRefreshToken = require("../../utils/get-refresh-token");
+const cookie = require("../../utils/get-cookie-value");
 const { NotAuthenticated } = require("../../lib/error-handling");
 const redis = require("../../redis");
 exports.RefreshToken = class RefreshToken {
@@ -45,7 +45,7 @@ exports.RefreshToken = class RefreshToken {
         await redis.set(_id, newRefreshToken, "EX", 3600 * 24 * 365);
         return "Created refresh token";
       } else {
-        const refreshToken = getRefreshToken(params);
+        const refreshToken = cookie("refreshToken", params);
         const existRefreshToken = await redis.get(_id);
         if (existRefreshToken && existRefreshToken === refreshToken) {
           const payload = await authService.verifyAccessToken(

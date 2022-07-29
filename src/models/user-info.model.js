@@ -8,12 +8,11 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      userId: { type: Schema.Types.ObjectId, required: true },
       coverPhoto: {
         url: { type: String, default: "" },
         id: { type: String, default: "" },
       },
-      phone: { type: Number, default: -1 },
+      phone: { type: String, default: "-" },
       gender: { type: String, enum: ["male", "female"] },
       workAt: {
         career: { type: String },

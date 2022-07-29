@@ -3,6 +3,7 @@ const search = require("../../lib/mongoose-fuzzy-search");
 const { hashPassword, protect } =
   require("@feathersjs/authentication-local").hooks;
 const { softDelete, disablePagination } = require("feathers-hooks-common");
+const adminChecking = require("../../middleware/adminChecking");
 
 module.exports = {
   before: {
@@ -12,18 +13,11 @@ module.exports = {
     create: [hashPassword("password")],
     update: [hashPassword("password"), authenticate("jwt")],
     patch: [hashPassword("password")],
-    remove: [authenticate("jwt")],
+    remove: [authenticate("jwt"), adminChecking],
   },
 
   after: {
-    all: [
-      // Make sure the password field is never sent to the client
-      // Always must be the last hook
-      protect("password"),
-      protect("deleted"),
-      protect("followers"),
-      protect("followings"),
-    ],
+    all: [protect("password")],
     find: [],
     get: [],
     create: [],

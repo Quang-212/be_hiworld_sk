@@ -13,12 +13,12 @@ const { queryChecking } = require("../../utils/query-checking");
 const client = require("../../redis");
 
 const isAdmin = (params) => {
-  if (params?.authentication && params?.authentication.accessToken) {
-    return process.env.ADMIN_ROLE.includes(
+  return (
+    params?.authentication.accessToken &&
+    process.env.ADMIN_ROLE.includes(
       decode(params?.authentication.accessToken)?.role
-    );
-  }
-  return false;
+    )
+  );
 };
 const isAuthenticated = async (params, authService, id) => {
   if (params?.authentication && params?.authentication.accessToken) {
@@ -38,9 +38,8 @@ exports.Users = class Users extends Service {
   }
   async create(data, params) {
     if (data?.googleId || data?.facebookId) {
-      const newUser = await super.create(data, params);
-      await this.app.service("user-info").create({ userId: newUser._id });
-      return newUser;
+      const userInfo = await this.app.service("user-info").create(data, params);
+      return super.create({ ...data, userInfo: userInfo._id }, params);
     }
     const { email } = data;
     try {
@@ -51,7 +50,9 @@ exports.Users = class Users extends Service {
           existEmail.password === process.env.DEFAULT_OAUTH_PASSWORD
         ) {
           return new ExistOAuthUser(
-            "Tài khoản của bạn đã đăng nhập trước đó bằng GG hoặc FB!"
+            isAdmin(params)
+              ? "Email đã được đăng ký qua GG hoặc FB"
+              : "Tài khoản của bạn đã đăng nhập trước đó bằng GG hoặc FB!"
           );
         } else if (existEmail) {
           return new Exist409("Email đã tồn tại!");
@@ -59,10 +60,14 @@ exports.Users = class Users extends Service {
         return "Redirect to verify page";
       } else {
         if (isAdmin(params)) {
-          const existEmail = await this.Model.findOne({ email });
-          if (existEmail)
-            return new GeneralError(new Error("Email đã tồn tại!"));
-          return await super.create(data, params);
+          const userInfo = await this.app
+            .service("user-info")
+            .create(data, params);
+          const user = await super.create(
+            { ...data, userInfo: userInfo._id },
+            params
+          );
+          return { ...user, userInfo };
         }
         const aliveCode = await client.get(email);
         if (!aliveCode) {
@@ -70,11 +75,10 @@ exports.Users = class Users extends Service {
             new Error("Mã xác thực của bạn không đúng hoặc đã hết hạn!")
           );
         }
-        const newUser = await super.create(data, params);
-        await this.app
+        const userInfo = await this.app
           .service("user-info")
-          .create({ userId: newUser._id, gender: data.gender });
-        return newUser;
+          .create(data, params);
+        return super.create({ ...data, userInfo: userInfo._id }, params);
       }
     } catch (error) {
       return new GeneralError(
@@ -87,14 +91,21 @@ exports.Users = class Users extends Service {
   }
   async patch(id, data, params) {
     const authService = new AuthenticationService(this.app);
-
     if (data?.googleId || data?.facebookId) {
-      return await super.patch(id, data, params);
+      const user = await super.patch(id, data, params);
+      const userInfo = await this.app
+        .service("user-info")
+        .patch(user.userInfo, data, params);
+      return { ...user, userInfo };
     }
     const { email } = data;
     try {
       if (isAdmin(params)) {
-        return await super.patch(id, data, params);
+        const user = await super.patch(id, data, params);
+        const userInfo = await this.app
+          .service("user-info")
+          .patch(user.userInfo, data, params);
+        return { ...user, userInfo };
       }
 
       if ((await isAuthenticated(params, authService, id))?.code) {
@@ -103,7 +114,11 @@ exports.Users = class Users extends Service {
           "block-by-cross-action"
         );
       } else if (await isAuthenticated(params, authService, id)) {
-        return await super.patch(id, data, params);
+        const user = await super.patch(id, data, params);
+        const userInfo = await this.app
+          .service("user-info")
+          .patch(user.userInfo, data, params);
+        return { ...user, userInfo };
       }
 
       if (queryChecking(params, "checking")) {
@@ -120,7 +135,11 @@ exports.Users = class Users extends Service {
         if (queryChecking(params, "verify")) {
           return "Redirect to new password page.";
         } else {
-          return await super.patch(id, data, params);
+          const user = await super.patch(id, data, params);
+          await this.app
+            .service("user-info")
+            .patch(user.userInfo, data, params);
+          return "Cập nhật người dùng thành công!";
         }
       }
     } catch (error) {

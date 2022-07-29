@@ -25,6 +25,11 @@ module.exports = function (app) {
         default: process.env.DEFAULT_OAUTH_PASSWORD,
       },
       role: { type: String, required: true, default: "newbie" },
+      userInfo: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "userInfo",
+      },
       deleted: { type: Boolean, default: false },
     },
     {

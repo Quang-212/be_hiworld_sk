@@ -14,7 +14,7 @@ module.exports = function (app) {
       type: { type: String, enum: ["coding", "quiz"], required: true },
       requirement: { type: String, required: true },
       codeRules: { type: String },
-      options: { type: Array },
+      options: { type: String },
       result: { type: String, required: true },
       deleted: { type: Boolean, default: false },
     },
@@ -22,7 +22,6 @@ module.exports = function (app) {
       timestamps: true,
     }
   );
-
   // This is necessary to avoid model compilation errors in watch mode
   // see https://mongoosejs.com/docs/api/connection.html#connection_Connection-deleteModel
   if (mongooseClient.modelNames().includes(modelName)) {
