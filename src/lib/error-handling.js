@@ -21,8 +21,8 @@ class Exist409 extends FeathersError {
   }
 }
 class NotFound extends FeathersError {
-  constructor(message, data) {
-    super(message, "NotFound", 404, "user-not-exsist", data);
+  constructor(message, className, data) {
+    super(message, "NotFound", 404, className, data);
   }
 }
 class Timeout extends FeathersError {

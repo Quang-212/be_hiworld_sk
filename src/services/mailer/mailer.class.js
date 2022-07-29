@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const codeContent = require("../../mail-verify");
 const redis = require("../../redis");
+const { NotFound } = require("../../lib/error-handling");
 
 exports.Mailer = class Mailer {
   constructor(options) {
@@ -44,9 +45,17 @@ exports.Mailer = class Mailer {
         subject: "Verify message from Education web app",
         html: codeVerifyContent,
       });
-      return await redis.set(email, code, "EX", 60 * 10);
+      return await redis.set(`code-${email}`, code, "EX", 60 * 10);
     } catch (err) {
       return err;
     }
+  }
+  async find(params) {
+    const { email, verifyCode } = params.query;
+    const code = await redis.get(`code-${email}`);
+    if (code === verifyCode) {
+      return "OK";
+    }
+    return new NotFound("Verify code is founded", "not-found");
   }
 };

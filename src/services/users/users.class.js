@@ -14,9 +14,9 @@ const client = require("../../redis");
 
 const isAdmin = (params) => {
   return (
-    params?.authentication.accessToken &&
+    params?.authentication?.accessToken &&
     process.env.ADMIN_ROLE.includes(
-      decode(params?.authentication.accessToken)?.role
+      decode(params.authentication.accessToken).role
     )
   );
 };
@@ -69,7 +69,7 @@ exports.Users = class Users extends Service {
           );
           return { ...user, userInfo };
         }
-        const aliveCode = await client.get(email);
+        const aliveCode = await client.get(`code-${email}`);
         if (!aliveCode) {
           return new GeneralError(
             new Error("Mã xác thực của bạn không đúng hoặc đã hết hạn!")
@@ -101,6 +101,7 @@ exports.Users = class Users extends Service {
     const { email } = data;
     try {
       if (isAdmin(params)) {
+        console.log("isAdmin");
         const user = await super.patch(id, data, params);
         const userInfo = await this.app
           .service("user-info")
@@ -122,19 +123,27 @@ exports.Users = class Users extends Service {
       }
 
       if (queryChecking(params, "checking")) {
-        const existEmail = await this.Model.find({ email });
-        if (existEmail[0] === undefined) {
-          return new NotFound("Người dùng không tồn tại trong hệ thống!");
+        const existEmail = await this.Model.findOne({ email });
+        console.log(existEmail);
+        if (!existEmail) {
+          return new NotFound(
+            "Người dùng không tồn tại trong hệ thống!",
+            "user-not-exist"
+          );
         }
         return "Redirect to verify page";
       } else {
-        const aliveCode = client.get(email);
+        const aliveCode = client.get(`code-${email}`);
         if (!aliveCode) {
           return new Timeout("Mã xác thực của bạn không đúng hoặc đã hết hạn!");
         }
         if (queryChecking(params, "verify")) {
           return "Redirect to new password page.";
         } else {
+          const code = await client.get(`code-${email}`);
+          if (code !== data.verifyCode) {
+            return new Timeout(new Error("Mã xác thực của bạn hết hạn!"));
+          }
           const user = await super.patch(id, data, params);
           await this.app
             .service("user-info")
