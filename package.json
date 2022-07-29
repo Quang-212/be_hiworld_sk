@@ -27,7 +27,7 @@
     "test": "yarn run lint && yarn run jest",
     "lint": "standard",
     "dev": "nodemon src/",
-    "start": "node src/",
+    "start": "nodemon -L src/index.js",
     "jest": "jest --forceExit"
   },
   "standard": {
