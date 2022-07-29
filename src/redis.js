@@ -1,8 +1,5 @@
 const Redis = require("ioredis");
 
-const redis = new Redis({
-  port: 6379,
-  host: "cache",
-});
+const redis = new Redis();
 //configured to use redis as a cache
 module.exports = redis;
