@@ -15,6 +15,11 @@ const userCourse = require("./user-course/user-course.service.js");
 const lessonComment = require("./lesson-comment/lesson-comment.service.js");
 const lessonExercise = require('./lesson-exercise/lesson-exercise.service.js');
 const userFollow = require('./user-follow/user-follow.service.js');
+const userRanking = require('./user-ranking/user-ranking.service.js');
+const assignmentSubmit = require('./assignment-submit/assignment-submit.service.js');
+const assignmentComment = require('./assignment-comment/assignment-comment.service.js');
+const userCoursePosition = require('./user-course-position/user-course-position.service.js');
+const userRoom = require('./user-room/user-room.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(users);
@@ -34,4 +39,9 @@ module.exports = function (app) {
   app.configure(lessonComment);
   app.configure(lessonExercise);
   app.configure(userFollow);
+  app.configure(userRanking);
+  app.configure(assignmentSubmit);
+  app.configure(assignmentComment);
+  app.configure(userCoursePosition);
+  app.configure(userRoom);
 };

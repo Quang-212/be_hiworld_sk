@@ -56,6 +56,6 @@ exports.Mailer = class Mailer {
     if (code === verifyCode) {
       return "OK";
     }
-    return new NotFound("Verify code is founded", "not-found");
+    return new NotFound("Verify code is not founded", "not-found");
   }
 };

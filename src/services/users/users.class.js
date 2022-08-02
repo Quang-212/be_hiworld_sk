@@ -101,7 +101,6 @@ exports.Users = class Users extends Service {
     const { email } = data;
     try {
       if (isAdmin(params)) {
-        console.log("isAdmin");
         const user = await super.patch(id, data, params);
         const userInfo = await this.app
           .service("user-info")
@@ -124,7 +123,6 @@ exports.Users = class Users extends Service {
 
       if (queryChecking(params, "checking")) {
         const existEmail = await this.Model.findOne({ email });
-        console.log(existEmail);
         if (!existEmail) {
           return new NotFound(
             "Người dùng không tồn tại trong hệ thống!",

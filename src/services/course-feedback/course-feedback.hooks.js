@@ -1,7 +1,6 @@
 const { authenticate } = require("@feathersjs/authentication").hooks;
 const { disablePagination } = require("feathers-hooks-common");
 const search = require("../../lib/mongoose-fuzzy-search");
-const adminChecking = require("../../middleware/adminChecking");
 module.exports = {
   before: {
     all: [],

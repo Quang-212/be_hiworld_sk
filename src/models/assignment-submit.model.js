@@ -1,31 +1,25 @@
-// exercise-model.js - A mongoose model
+// assignment-submit-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "exercise";
+  const modelName = "assignmentSubmit";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      name: { type: String, required: true },
-      slug: { type: String, required: true },
-      difficulty: { type: Number, required: true },
-      type: {
-        type: String,
-        enum: ["coding", "quiz", "project"],
-        required: true,
-      },
-      requirement: { type: String, required: true },
-      codeRules: { type: String },
-      options: { type: String },
-      result: { type: String, required: true },
-      deleted: { type: Boolean, default: false },
+      userId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
+      exerciseId: { type: String, required: true },
+      html: { type: String, required: true },
+      css: { type: String, required: true },
+      js: { type: String, required: true },
+      isSubmitted: { type: Boolean, required: true, default: false },
     },
     {
       timestamps: true,
     }
   );
+
   // This is necessary to avoid model compilation errors in watch mode
   // see https://mongoosejs.com/docs/api/connection.html#connection_Connection-deleteModel
   if (mongooseClient.modelNames().includes(modelName)) {

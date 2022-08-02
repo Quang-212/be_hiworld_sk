@@ -33,8 +33,17 @@ module.exports = function (app) {
       app.channel(`userIds/${user._id.toString()}`).join(connection);
     }
   });
-  app.service("friendship").publish("created", (data) => {
-    return app.channel(`userIds/${data.receiveId}`);
+  app.service("course-feedback").on("created", (data, context) => {
+    app.channel(`course-feedback/${data._id}`).join(context.params.connection);
+  });
+  // app.service("course-feedback").publish("created", (data) => {
+  //   return app.channel(`course-feedback/${data._id}`);
+  // });
+  app.service("course-feedback").publish("created", async (data) => {
+    return app.channel("authenticated").send({
+      ...data,
+      userId: await app.service("users").get(data.userId),
+    });
   });
 
   app.on("logout", ({ connection }) => {
@@ -45,9 +54,6 @@ module.exports = function (app) {
   });
   // eslint-disable-next-line no-unused-vars
   app.publish((data, hook) => {
-    // Here you can add event publishers to channels set up in `channels.js`
-    // To publish only for a specific event use `app.publish(eventname, () => {})`
-
     // e.g. to publish all service events to all authenticated users use
     return app.channel("authenticated");
   });
