@@ -14,6 +14,7 @@ module.exports = function (app) {
       facebookId: { type: String, default: "" },
       firstName: { type: String, required: true, lowercase: true },
       lastName: { type: String, required: true, lowercase: true },
+      search: { type: String, required: true, lowercase: true },
       profilePhoto: {
         url: { type: String, default: "" },
         id: { type: String, default: "" },

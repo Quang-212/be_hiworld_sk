@@ -10,6 +10,7 @@ module.exports = function (app) {
     {
       title: { type: String, required: true, lowerCase: true },
       subTitle: { type: String, required: true },
+      search: { type: String, required: true, lowercase: true },
       slug: { type: String, required: true },
       category: {
         type: Schema.Types.ObjectId,

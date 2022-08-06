@@ -9,6 +9,7 @@ module.exports = function (app) {
   const schema = new Schema(
     {
       name: { type: String, required: true, lowercase: true },
+      search: { type: String, required: true, lowercase: true },
       description: { type: String, required: true },
       courseId: {
         type: Schema.Types.ObjectId,

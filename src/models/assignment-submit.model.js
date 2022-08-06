@@ -10,9 +10,9 @@ module.exports = function (app) {
     {
       userId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
       exerciseId: { type: String, required: true },
-      html: { type: String, required: true },
-      css: { type: String, required: true },
-      js: { type: String, required: true },
+      html: { type: String, default: "" },
+      css: { type: String, default: "" },
+      js: { type: String, default: "" },
       isSubmitted: { type: Boolean, required: true, default: false },
     },
     {

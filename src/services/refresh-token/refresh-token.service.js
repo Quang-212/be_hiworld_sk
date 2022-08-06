@@ -21,11 +21,18 @@ module.exports = function (app) {
           res.clearCookie("refreshToken");
           return next();
         }
-        res.cookie("refreshToken", await client.get(req.body._id), {
-          httpOnly: true,
-          secure: false,
-          maxAge: 1000 * 3600 * 24 * 365,
-        });
+        res.cookie(
+          "refreshToken",
+          await client.get(
+            `token-${res.hook.params?.provider}-${req.body._id}`
+          ),
+          {
+            httpOnly: true,
+            secure: false,
+            maxAge: 1000 * 3600 * 24 * 365,
+            sameSite: "lax",
+          }
+        );
         return next();
       } catch (error) {
         next(error);

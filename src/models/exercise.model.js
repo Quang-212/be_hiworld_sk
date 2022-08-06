@@ -9,6 +9,7 @@ module.exports = function (app) {
   const schema = new Schema(
     {
       name: { type: String, required: true },
+      search: { type: String, required: true, lowercase: true },
       slug: { type: String, required: true },
       difficulty: { type: Number, required: true },
       type: {

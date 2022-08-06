@@ -42,11 +42,18 @@ exports.RefreshToken = class RefreshToken {
       };
       const newRefreshToken = await signRefreshToken();
       if (queryChecking(params, "login")) {
-        await redis.set(_id, newRefreshToken, "EX", 3600 * 24 * 365);
+        await redis.set(
+          `token-${params?.provider}-${_id}`,
+          newRefreshToken,
+          "EX",
+          3600 * 24 * 365
+        );
         return "Created refresh token";
       } else {
         const refreshToken = cookie("refreshToken", params);
-        const existRefreshToken = await redis.get(_id);
+        const existRefreshToken = await redis.get(
+          `token-${params?.provider}-${_id}`
+        );
         if (existRefreshToken && existRefreshToken === refreshToken) {
           const payload = await authService.verifyAccessToken(
             refreshToken,
@@ -76,7 +83,9 @@ exports.RefreshToken = class RefreshToken {
   }
   async remove(id, params) {
     try {
-      await redis.del(params.user._id.toString());
+      await redis.del(
+        `token-${params?.provider}-${params.user._id.toString()}`
+      );
       return "Deleted refresh token";
     } catch (error) {
       return new GeneralError(new Error(error || "Lỗi hệ thống!"));

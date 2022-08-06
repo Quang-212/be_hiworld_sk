@@ -60,11 +60,14 @@ app.configure(express.rest());
 app.configure(
   socketio(function (io) {
     io.on("connection", function (socket) {
-      socket.on("course-comment-join", (data) => {
-        app.channel(`courseIds/${data._id}`).join(socket.feathers);
+      socket.on("join-assignment-room", (data) => {
+        app.channel(`assignment-${data._id}`).join(socket.feathers);
+        socket.emit("joined-assignment-room", "thanh cong nhe");
+        console.log(app.channel(`assignment-${data._id}`).length);
       });
-      socket.on("course-comment-leave", (data) => {
-        app.channel(`courseIds/${data._id}`).leave(socket.feathers);
+
+      socket.on("leave-assignment-room", (data) => {
+        app.channel(`assignment-${data._id}`).leave(socket.feathers);
       });
     });
     // Registering Socket.io middleware

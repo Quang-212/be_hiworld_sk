@@ -6,18 +6,18 @@ module.exports = function (app) {
   const modelName = "courseFeedback";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
-  const replySchema = new Schema({
-    userId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-    taggedId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-    comment: { type: String, required: true },
-  });
+
   const schema = new Schema(
     {
       userId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      courseId: { type: Schema.Types.ObjectId, required: true },
+      tagId: { type: Schema.Types.ObjectId, default: null },
+      courseId: { type: Schema.Types.ObjectId, default: null },
       comment: { type: String, required: true },
-      rating: { type: Number, required: true },
-      reply: [{ type: replySchema, default: null }],
+      rating: { type: Number, default: null },
+      replyTo: {
+        type: Schema.Types.ObjectId,
+        default: null,
+      },
     },
     {
       timestamps: true,
