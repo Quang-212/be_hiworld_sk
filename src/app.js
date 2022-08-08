@@ -60,12 +60,10 @@ app.configure(express.rest());
 app.configure(
   socketio(function (io) {
     io.on("connection", function (socket) {
+      //join-leave assignment-submit-room
       socket.on("join-assignment-room", (data) => {
         app.channel(`assignment-${data._id}`).join(socket.feathers);
-        socket.emit("joined-assignment-room", "thanh cong nhe");
-        console.log(app.channel(`assignment-${data._id}`).length);
       });
-
       socket.on("leave-assignment-room", (data) => {
         app.channel(`assignment-${data._id}`).leave(socket.feathers);
       });

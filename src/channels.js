@@ -8,65 +8,60 @@ module.exports = function (app) {
     app.channel("anonymous").join(connection);
   });
 
-  app.on("login", (authResult, { connection }) => {
-    // connection can be undefined if there is no
-    // real-time connection, e.g. when logging in via REST
+  app.on("login", async (authResult, { connection }) => {
     if (connection) {
       // Obtain the logged in user from the connection
       const user = connection.user;
-
       // The connection is no longer anonymous, remove it
       app.channel("anonymous").leave(connection);
 
       // Add it to the authenticated user channel
       app.channel("authenticated").join(connection);
-      console.log(app.channel(`authenticated`).length);
-
-      // Channels can be named anything and joined on any condition
-
-      // E.g. to send real-time events only to admins use
-      // if(user.isAdmin) { app.channel('admins').join(connection); }
-
-      // If the user has joined e.g. chat rooms
-      // if(Array.isArray(user.rooms)) user.rooms.forEach(room => app.channel(`rooms/${room.id}`).join(connection));
-
-      app.channel(`userIds/${user._id.toString()}`).join(connection);
+      console.log(app.channel(`authenticated`).length, "authenticated");
+      const userRooms = await app
+        .service("user-room")
+        .Model.find({ userId: user._id.toString() });
+      console.log(userRooms);
+      userRooms.forEach((room, index) => {
+        app.channel(room.name).join(connection);
+        console.log(app.channel(room.name).length, `room-${index}`);
+      });
     }
   });
-  app.service("course-feedback").on("created", (data, context) => {
-    app.channel(`course-feedback/${data._id}`).join(context.params.connection);
-  });
-  // app.service("course-feedback").publish("created", (data) => {
-  //   return app.channel(`course-feedback/${data._id}`);
-  // });
-  app.service("course-feedback").publish("created", async (data) => {
-    return app.channel("authenticated").send({
-      ...data,
-      userId: await app.service("users").get(data.userId),
-    });
+
+  app.service("notification").on("created", async (notification, context) => {
+    app.channel(notification.room).join(context.params.connection);
   });
 
+  app.service("notification").publish("created", async (data) => {
+    return app.channel(data.room);
+  });
+
+  // app.service("course-feedback").on("created", (data, context) => {
+  //   app
+  //     .channel(`course-feedback/${data._id.toString()}`)
+  //     .join(context.params.connection);
+  // });
+  // app.service("course-feedback").publish("created", async (data) => {
+  //   return app.channel("authenticated").send({
+  //     ...data,
+  //     userId: await app.service("users").get(data.userId),
+  //   });
+  // });
+
+  app.service("assignment-submit").publish("patched", (data) => {
+    return app.channel(`assignment-${data._id.toString()}`);
+  });
+  // app.service("notification").publish("created", (data) => {
+  //   return app.channel(`assignment-${data._id.toString()}`);
+  //   return app.channel(`assignment-62d7b2cee3db70fb70a4cb2f`);
+  // });
   app.on("logout", ({ connection }) => {
     if (connection) {
-      // Join the channels a logged out connection should be in
       app.channel("anonymous").join(connection);
     }
   });
-  // eslint-disable-next-line no-unused-vars
   app.publish((data, hook) => {
-    // e.g. to publish all service events to all authenticated users use
     return app.channel("authenticated");
   });
-
-  // Here you can also add service specific event publishers
-  // e.g. the publish the `users` service `created` event to the `admins` channel
-  // app.service('users').publish('created', () => app.channel('admins'));
-
-  // With the userId and email organization from above you can easily select involved users
-  // app.service('messages').publish(() => {
-  //   return [
-  //     app.channel(`userIds/${data.createdBy}`),
-  //     app.channel(`emails/${data.recipientEmail}`)
-  //   ];
-  // });
 };
