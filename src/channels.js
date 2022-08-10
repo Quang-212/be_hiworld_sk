@@ -20,11 +20,10 @@ module.exports = function (app) {
       console.log(app.channel(`authenticated`).length, "authenticated");
       const userRooms = await app
         .service("user-room")
-        .Model.find({ userId: user._id.toString() });
-      console.log(userRooms);
-      userRooms.forEach((room, index) => {
-        app.channel(room.name).join(connection);
-        console.log(app.channel(room.name).length, `room-${index}`);
+        .Model.find({ user_id: user._id.toString() });
+      userRooms.forEach(({ room }, index) => {
+        app.channel(room).join(connection);
+        console.log(app.channel(room).length, `room-${index}`);
       });
     }
   });
@@ -52,15 +51,21 @@ module.exports = function (app) {
   app.service("assignment-submit").publish("patched", (data) => {
     return app.channel(`assignment-${data._id.toString()}`);
   });
-  // app.service("notification").publish("created", (data) => {
-  //   return app.channel(`assignment-${data._id.toString()}`);
-  //   return app.channel(`assignment-62d7b2cee3db70fb70a4cb2f`);
-  // });
+
   app.on("logout", ({ connection }) => {
     if (connection) {
       app.channel("anonymous").join(connection);
     }
   });
+
+  app.on("disconnect", async (connection) => {
+    const now = new Date().getTime();
+    connection &&
+      (await app.service("users").Model.findByIdAndUpdate(connection.user._id, {
+        last_login: now,
+      }));
+  });
+
   app.publish((data, hook) => {
     return app.channel("authenticated");
   });

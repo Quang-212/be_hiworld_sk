@@ -100,13 +100,13 @@ exports.Users = class Users extends Service {
     }
     const { email } = data;
     try {
-      if (isAdmin(params)) {
-        const user = await super.patch(id, data, params);
-        const userInfo = await this.app
-          .service("user-info")
-          .patch(user.userInfo, data, params);
-        return { ...user, userInfo };
-      }
+      // if (isAdmin(params)) {
+      //   const user = await super.patch(id, data, params);
+      //   const userInfo = await this.app
+      //     .service("user-info")
+      //     .patch(user.userInfo, data, params);
+      //   return { ...user, userInfo };
+      // }
 
       if ((await isAuthenticated(params, authService, id))?.code) {
         return new Forbidden(

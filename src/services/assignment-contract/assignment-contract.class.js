@@ -8,10 +8,8 @@ exports.AssignmentContract = class AssignmentContract {
 
   async find(params) {
     const { assignmentId } = params.query;
-    return (
-      (await (redis.get(`assignment-contract-${assignmentId}`) &&
-        JSON.parse(redis.get(`assignment-contract-${assignmentId}`)))) || null
-    );
+    const contract = await redis.get(`assignment-contract-${assignmentId}`);
+    return (contract && JSON.parse(contract)) || null;
   }
 
   async get(id, params) {
@@ -19,6 +17,7 @@ exports.AssignmentContract = class AssignmentContract {
   }
 
   async create(data, params) {
+    console.log(data);
     const { assignmentId } = data;
     const existing = await redis.get(`assignment-contract-${assignmentId}`);
     if (existing) {
@@ -28,7 +27,9 @@ exports.AssignmentContract = class AssignmentContract {
     }
     await redis.set(
       `assignment-contract-${assignmentId}`,
-      JSON.stringify(data)
+      JSON.stringify(data),
+      "EX",
+      30
     );
     return { code: 200 };
   }

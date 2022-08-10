@@ -18,7 +18,6 @@ module.exports = function (app) {
       assignment_status: {
         type: String,
         enum: ["pending", "solving", "solved"],
-        default: "pending",
       },
       room: { type: String, required: true }, // room name
       message: { type: String },
