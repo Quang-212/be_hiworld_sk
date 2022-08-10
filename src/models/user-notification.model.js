@@ -12,7 +12,7 @@ module.exports = function (app) {
       notification_id: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: "notifications",
+        ref: "notification",
       },
       read: { type: Boolean, default: false },
     },
