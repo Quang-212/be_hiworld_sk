@@ -11,6 +11,7 @@ const {
 } = require("../../lib/error-handling");
 const { queryChecking } = require("../../utils/query-checking");
 const client = require("../../redis");
+const { searchString } = require("../../utils/searchString");
 
 const isAdmin = (params) => {
   return (
@@ -38,6 +39,10 @@ exports.Users = class Users extends Service {
   }
   async create(data, params) {
     if (data?.googleId || data?.facebookId) {
+      data = {
+        ...data,
+        search: searchString([data.firstName, data.lastName, data.email]),
+      };
       const userInfo = await this.app.service("user-info").create(data, params);
       return super.create({ ...data, userInfo: userInfo._id }, params);
     }
@@ -92,6 +97,10 @@ exports.Users = class Users extends Service {
   async patch(id, data, params) {
     const authService = new AuthenticationService(this.app);
     if (data?.googleId || data?.facebookId) {
+      data = {
+        ...data,
+        // search: searchString([data.firstName, data.lastName, data.email]),
+      };
       const user = await super.patch(id, data, params);
       const userInfo = await this.app
         .service("user-info")
@@ -100,13 +109,13 @@ exports.Users = class Users extends Service {
     }
     const { email } = data;
     try {
-      // if (isAdmin(params)) {
-      //   const user = await super.patch(id, data, params);
-      //   const userInfo = await this.app
-      //     .service("user-info")
-      //     .patch(user.userInfo, data, params);
-      //   return { ...user, userInfo };
-      // }
+      if (isAdmin(params)) {
+        const user = await super.patch(id, data, params);
+        const userInfo = await this.app
+          .service("user-info")
+          .patch(user.userInfo, data, params);
+        return { ...user, userInfo };
+      }
 
       if ((await isAuthenticated(params, authService, id))?.code) {
         return new Forbidden(
@@ -151,7 +160,7 @@ exports.Users = class Users extends Service {
       }
     } catch (error) {
       return new GeneralError(
-        new Error(error || "Xảy ra lỗi hệ thống - Server - Patch - User")
+        error?.message || "Xảy ra lỗi hệ thống - Server - Patch - User"
       );
     }
   }

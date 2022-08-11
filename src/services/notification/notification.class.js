@@ -7,11 +7,16 @@ exports.Notification = class Notification extends Service {
   async create(data, params) {
     try {
       const _id = this.app.get("mongooseClient").Types.ObjectId();
-      const { room } = data;
-      const usersInRoom = await this.app
-        .service("user-room")
-        .Model.find({ room })
-        .select("user_id -_id");
+
+      const { room, sender } = data;
+
+      const usersInRoom = (
+        await this.app
+          .service("user-room")
+          .Model.find({ room })
+          .select("user_id -_id")
+      ).filter((user) => user.user_id.toString() !== sender);
+
       const [response] = await Promise.all([
         super.create({ ...data, _id }, params),
         this.app.service("user-notification").Model.insertMany(
@@ -21,6 +26,7 @@ exports.Notification = class Notification extends Service {
           }))
         ),
       ]);
+
       return response;
     } catch (error) {
       console.log(error);

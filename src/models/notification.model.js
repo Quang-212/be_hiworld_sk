@@ -19,6 +19,7 @@ module.exports = function (app) {
         type: String,
         enum: ["pending", "solving", "solved"],
       },
+      assignment_id: { type: Schema.Types.ObjectId },
       room: { type: String, required: true }, // room name
       message: { type: String },
     },
