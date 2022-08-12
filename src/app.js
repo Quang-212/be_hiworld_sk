@@ -34,8 +34,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:3039",
-      "http://localhost:3034",
-      "http://34.87.93.1:3060",
+      "http://admin.quatangtaodo.com",
+      process.env.SECRET_ADMIN_DOMAIN,
       process.env.SECRET_FRONTEND_DOMAIN,
     ],
     allowedHeaders: [
