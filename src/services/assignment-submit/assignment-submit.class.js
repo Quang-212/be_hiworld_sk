@@ -11,7 +11,7 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
       this.Model.create({ userId, exerciseId }),
       this.app
         .service("user-room")
-        .create({ userId, name: `exercise-${exerciseId}` }, params),
+        .create({ user_id: userId, room: `exercise-${exerciseId}` }, params),
     ]);
     return assignment;
   }
