@@ -23,4 +23,11 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
     }
     return super.find(params);
   }
+  async patch(id, data, params) {
+    const res = await super.patch(id, data, params);
+    return {
+      ...res,
+      language: Object.keys(data),
+    };
+  }
 };
