@@ -1,19 +1,17 @@
-// notification-model.js - A mongoose model
+// assignment-chat-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "notification";
+  const modelName = "assignmentChat";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
+
   const schema = new Schema(
     {
-      //custom data for notification
-      room: { type: String, required: true }, // room name
-      assignment_id: { type: Schema.Types.ObjectId }, // assignment id
-      assignment_status: { type: String },
-      exercise_type: { type: String }, //exercise type
-      contract_id: { type: Schema.Types.ObjectId }, // assignment contract id
+      sender_id: { type: String, required: true },
+      contract_id: { type: Schema.Types.ObjectId, required: true },
+      message: { type: String, required: true },
     },
     {
       timestamps: true,

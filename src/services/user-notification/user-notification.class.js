@@ -16,4 +16,9 @@ exports.UserNotification = class UserNotification extends Service {
       );
     }
   }
+
+  // async find(params) {
+  //   const { owner } = params.query;
+  //   return await this.Model.find({ owner }).populate("notification");
+  // }
 };

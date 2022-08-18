@@ -1,19 +1,24 @@
-// notification-model.js - A mongoose model
+// assignment-contract-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "notification";
+  const modelName = "assignmentContract";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      //custom data for notification
-      room: { type: String, required: true }, // room name
-      assignment_id: { type: Schema.Types.ObjectId }, // assignment id
-      assignment_status: { type: String },
-      exercise_type: { type: String }, //exercise type
-      contract_id: { type: Schema.Types.ObjectId }, // assignment contract id
+      sender: { type: Schema.Types.ObjectId, required: true },
+      assignment_id: { type: Schema.Types.ObjectId, required: true },
+      exercise_id: { type: Schema.Types.ObjectId, required: true },
+      status: {
+        type: String,
+        enum: ["pending", "solving", "solved"],
+        required: true,
+        default: "pending",
+      },
+      accepter: { type: Schema.Types.ObjectId, required: true },
+      content: { type: String, required: true },
     },
     {
       timestamps: true,

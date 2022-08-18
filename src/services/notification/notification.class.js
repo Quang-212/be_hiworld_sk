@@ -20,10 +20,13 @@ exports.Notification = class Notification extends Service {
       const [response] = await Promise.all([
         super.create({ ...data, _id }, params),
         this.app.service("user-notification").Model.insertMany(
-          usersInRoom.map((room) => ({
-            user_id: room.user_id,
-            notification_id: _id,
-          }))
+          [...new Set(usersInRoom.map((user) => user.user_id))].map(
+            (user_id) => ({
+              owner: user_id,
+              notification: _id,
+              ...data,
+            })
+          )
         ),
       ]);
 

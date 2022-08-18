@@ -8,11 +8,16 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      userId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      exerciseId: { type: String, required: true },
+      user_id: { type: Schema.Types.ObjectId, required: true, ref: "users" },
+      exercise_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "exercise",
+      },
       html: { type: String, default: "" },
       css: { type: String, default: "" },
       js: { type: String, default: "" },
+
       isSubmitted: { type: Boolean, required: true, default: false },
     },
     {

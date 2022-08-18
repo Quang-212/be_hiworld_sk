@@ -18,7 +18,7 @@
       "audience": "https://yourdomain.com",
       "issuer": "feathers",
       "algorithm": "HS256",
-      "expiresIn": "30m"
+      "expiresIn": "20m"
     },
     "local": {
       "usernameField": "email",

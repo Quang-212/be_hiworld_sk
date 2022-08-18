@@ -8,13 +8,21 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      user_id: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      notification_id: {
+      owner: { type: Schema.Types.ObjectId, required: true, ref: "users" },
+      sender: { type: Schema.Types.ObjectId, required: true, ref: "users" },
+      type: {
+        type: String,
+        enum: ["assignment", "course-comment", "lesson-comment"],
+        required: true,
+      },
+      title: { type: String, required: true },
+      message: { type: String, required: true },
+      notification: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: "notification",
       },
-      read: { type: Boolean, default: false },
+      read: { type: Boolean, required: true, default: false },
     },
     {
       timestamps: true,
