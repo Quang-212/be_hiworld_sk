@@ -1,3 +1,5 @@
+const { isEmpty } = require("lodash");
+
 /* eslint-disable no-unused-vars */
 exports.JoinRoom = class JoinRoom {
   constructor(options) {
@@ -28,6 +30,9 @@ exports.JoinRoom = class JoinRoom {
   }
 
   async remove(id, params) {
+    if (isEmpty(params.query)) {
+      throw new Error("Room data is required");
+    }
     return params.query;
   }
 };

@@ -1,15 +1,19 @@
-// user-ranking-model.js - A mongoose model
+// exercise-suggestion-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "userRanking";
+  const modelName = "exerciseSuggestion";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      user_id: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      score: { type: Number, required: true, default: 0 },
+      exercise_id: { type: Schema.Types.ObjectId, required: true },
+      step: { type: Number, required: true },
+      minus_score: { type: Number, required: true },
+      content: { type: String, required: true },
+      links: { type: Array },
+      deleted: { type: Boolean, default: false },
     },
     {
       timestamps: true,
