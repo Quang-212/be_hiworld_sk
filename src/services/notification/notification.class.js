@@ -30,7 +30,7 @@ exports.Notification = class Notification extends Service {
         ),
       ]);
 
-      return response;
+      return { ...response, type: data.type };
     } catch (error) {
       console.log(error);
     }
