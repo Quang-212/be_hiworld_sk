@@ -25,7 +25,6 @@ module.exports = function (app) {
         .Model.find({ user_id: user._id.toString() });
       userRooms.forEach(({ room }, index) => {
         app.channel(room).join(connection);
-        console.log(app.channel(room).length, `room-${index}`);
       });
     }
   });
@@ -37,14 +36,6 @@ module.exports = function (app) {
   app.service("notification").publish((data) => app.channel(data.room));
 
   app.service("join-room").on("created", (joinRequest, context) => {
-    const joined = app
-      .channel(joinRequest.room)
-      .filter(
-        (connection) =>
-          connection.user._id.toString() ===
-          context.params.connection.user._id.toString()
-      ).connections;
-    // isEmpty(joined) &&
     app.channel(joinRequest.room).join(context.params.connection);
   });
 
@@ -52,20 +43,19 @@ module.exports = function (app) {
     app.channel(leaveRequest.room).leave(context.params.connection);
   });
 
-  app.service("join-room").publish(async (data, context) => {
+  app.service("join-room").publish((data, context) => {
     return app.channel(data.room).send({
       ...data,
-      membersCount: app.channel(data.room).length,
+      amount: app.channel(data.room).length + (data.type === "join" ? 1 : -1),
     });
   });
-
   app.service("assignment-chat").publish(async (data) => {
     return app.channel(`assignment-contract:${data.contract_id}`);
   });
 
-  // app.service("chat-typing").publish(async (data) => {
-  //   return app.channel(data.room);
-  // });
+  app.service("chat-typing").publish((data) => {
+    return app.channel(data.room);
+  });
   // app.service("course-feedback").on("created", (data, context) => {
   //   app
   //     .channel(`course-feedback/${data._id.toString()}`)

@@ -17,8 +17,10 @@ module.exports = function (app) {
       html: { type: String, default: "" },
       css: { type: String, default: "" },
       js: { type: String, default: "" },
-
-      isSubmitted: { type: Boolean, required: true, default: false },
+      suggestion_step: { type: Number, default: -1, required: true },
+      highest_score: { type: Number, default: 100, required: true },
+      submit_time: { type: Date, default: null },
+      is_submitted: { type: Boolean, required: true, default: false },
     },
     {
       timestamps: true,

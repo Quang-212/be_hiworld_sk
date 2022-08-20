@@ -46,6 +46,7 @@ exports.Users = class Users extends Service {
       const userInfo = await this.app.service("user-info").create(data, params);
       return super.create({ ...data, userInfo: userInfo._id }, params);
     }
+
     const { email } = data;
     try {
       if (queryChecking(params, "checking")) {
@@ -96,7 +97,7 @@ exports.Users = class Users extends Service {
   }
   async patch(id, data, params) {
     const authService = new AuthenticationService(this.app);
-    if (data?.googleId || data?.facebookId) {
+    if (data.googleId || data.facebookId) {
       data = {
         ...data,
         // search: searchString([data.firstName, data.lastName, data.email]),
@@ -108,6 +109,7 @@ exports.Users = class Users extends Service {
       return { ...user, userInfo };
     }
     const { email } = data;
+
     try {
       if (isAdmin(params)) {
         const user = await super.patch(id, data, params);

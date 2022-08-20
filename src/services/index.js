@@ -26,6 +26,7 @@ const userNotification = require('./user-notification/user-notification.service.
 const assignmentChat = require('./assignment-chat/assignment-chat.service.js');
 const chatTyping = require('./chat-typing/chat-typing.service.js');
 const joinRoom = require('./join-room/join-room.service.js');
+const exerciseSuggestion = require('./exercise-suggestion/exercise-suggestion.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(users);
@@ -56,4 +57,5 @@ module.exports = function (app) {
   app.configure(assignmentChat);
   app.configure(chatTyping);
   app.configure(joinRoom);
+  app.configure(exerciseSuggestion);
 };
