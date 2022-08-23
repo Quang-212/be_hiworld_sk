@@ -38,13 +38,18 @@ exports.Users = class Users extends Service {
     this.app = app;
   }
   async create(data, params) {
+    const user_id = this.app.get("mongooseClient").Types.ObjectId();
     if (data?.googleId || data?.facebookId) {
       data = {
         ...data,
         search: searchString([data.firstName, data.lastName, data.email]),
       };
+      await this.app.service("user-ranking").create({ user_id }, params);
       const userInfo = await this.app.service("user-info").create(data, params);
-      return super.create({ ...data, userInfo: userInfo._id }, params);
+      return super.create(
+        { ...data, userInfo: userInfo._id, _id: user_id },
+        params
+      );
     }
 
     const { email } = data;
@@ -66,11 +71,12 @@ exports.Users = class Users extends Service {
         return "Redirect to verify page";
       } else {
         if (isAdmin(params)) {
+          await this.app.service("user-ranking").create({ user_id }, params);
           const userInfo = await this.app
             .service("user-info")
             .create(data, params);
           const user = await super.create(
-            { ...data, userInfo: userInfo._id },
+            { ...data, userInfo: userInfo._id, _id: user_id },
             params
           );
           return { ...user, userInfo };
@@ -81,10 +87,14 @@ exports.Users = class Users extends Service {
             new Error("Mã xác thực của bạn không đúng hoặc đã hết hạn!")
           );
         }
+        await this.app.service("user-ranking").create({ user_id }, params);
         const userInfo = await this.app
           .service("user-info")
           .create(data, params);
-        return super.create({ ...data, userInfo: userInfo._id }, params);
+        return super.create(
+          { ...data, userInfo: userInfo._id, _id: user_id },
+          params
+        );
       }
     } catch (error) {
       return new GeneralError(

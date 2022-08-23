@@ -9,7 +9,7 @@ module.exports = function (app) {
   const schema = new Schema(
     {
       user_id: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      score: { type: Number, required: true, default: 0 },
+      score: { type: Number, required: true, default: 100 },
     },
     {
       timestamps: true,

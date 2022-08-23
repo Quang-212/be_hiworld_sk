@@ -31,6 +31,7 @@ module.exports = function (app) {
         required: true,
         ref: "userInfo",
       },
+      status: { type: Boolean, default: false, required: true },
       last_login: { type: Date, default: Date.now },
       deleted: { type: Boolean, default: false },
     },

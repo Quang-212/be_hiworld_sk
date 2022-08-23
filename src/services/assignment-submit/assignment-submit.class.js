@@ -17,16 +17,32 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
   }
 
   async find(params) {
-    const { user_id, exercise_id, type = "all" } = params.query;
+    const {
+      user_id,
+      exercise_id,
+      type = "all",
+      $select,
+      $populate,
+    } = params.query;
     if (type === "one") {
-      return await this.Model.findOne({ user_id, exercise_id }).populate(
-        "exercise_id"
-      );
+      return await this.Model.findOne({
+        user_id,
+        exercise_id,
+      })
+        .populate($populate)
+        .select($select);
     }
     return super.find(params);
   }
 
   async patch(id, data, params) {
+    const { suggestion_step } = data;
+    if (suggestion_step !== undefined) {
+      return await this.Model.findByIdAndUpdate(id, data, { new: true }).select(
+        "suggestion_step"
+      );
+    }
+
     const res = await super.patch(id, data, params);
     return {
       ...res,
