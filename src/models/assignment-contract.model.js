@@ -13,10 +13,11 @@ module.exports = function (app) {
       exercise_id: { type: Schema.Types.ObjectId, required: true },
       status: {
         type: String,
-        enum: ["pending", "solving", "solved"],
+        enum: ["pending", "progressing", "finished"],
         required: true,
         default: "pending",
       },
+      is_solved: { type: Boolean, default: false, required: true },
       accepter: { type: Schema.Types.ObjectId, required: true },
       content: { type: String, required: true },
     },

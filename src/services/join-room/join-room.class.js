@@ -2,8 +2,9 @@ const { isEmpty } = require("lodash");
 
 /* eslint-disable no-unused-vars */
 exports.JoinRoom = class JoinRoom {
-  constructor(options) {
+  constructor(options, app) {
     this.options = options || {};
+    this.app = app;
   }
 
   async find(params) {
@@ -18,7 +19,10 @@ exports.JoinRoom = class JoinRoom {
   }
 
   async create(data, params) {
-    return data;
+    return {
+      ...data,
+      amount: (await this.app.channel(data.room).length) + 1,
+    };
   }
 
   async update(id, data, params) {
@@ -33,6 +37,9 @@ exports.JoinRoom = class JoinRoom {
     if (isEmpty(params.query)) {
       throw new Error("Room data is required");
     }
-    return params.query;
+    return {
+      ...params.query,
+      amount: (await this.app.channel(params.query.room).length) - 1,
+    };
   }
 };

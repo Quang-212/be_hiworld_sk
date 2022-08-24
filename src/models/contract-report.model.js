@@ -1,27 +1,28 @@
-// user-notification-model.js - A mongoose model
+// contract-report-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "userNotification";
+  const modelName = "contractReport";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      owner: { type: Schema.Types.ObjectId, required: true, ref: "users" }, // thong bao nay la cua ai
-      sender: { type: Schema.Types.ObjectId, required: true, ref: "users" }, // thong bao duoc gui tu ai
+      sender: { type: Schema.Types.ObjectId, required: true },
+      contract: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "assignmentContract",
+      },
       type: {
         type: String,
-        enum: ["app", "assignment", "course-comment", "lesson-comment"],
+        enum: ["success", "leave", "report"],
         required: true,
       },
-      title: { type: String, required: true },
-      message: { type: String, required: true },
-      notification: {
-        type: Schema.Types.ObjectId,
-        ref: "notification",
-      },
-      read: { type: Boolean, required: true, default: false },
+      content: { type: String },
+      is_accepted: { type: Boolean, default: false, required: true },
+      is_verified: { type: Boolean },
+      report_confirmed: { type: Boolean },
     },
     {
       timestamps: true,

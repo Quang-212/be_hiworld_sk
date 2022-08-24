@@ -9,12 +9,27 @@ exports.AssignmentContract = class AssignmentContract extends Service {
 
   async find(params) {
     try {
-      const { temporary = true, assignment_id } = params.query;
+      const {
+        temporary = true,
+        assignment_id,
+        find_type = "all",
+        user_id,
+      } = params.query;
+
       if (temporary) {
         const contract = await redis.get(
           `assignment-contract:${assignment_id}`
         );
         return (contract && JSON.parse(contract)) || null;
+      }
+
+      if (find_type === "one") {
+        return await this.Model.findOne({
+          $and: [
+            { $or: [{ sender: user_id }, { accepter: user_id }] },
+            { type: "progressing" },
+          ],
+        }).exec();
       }
       return super.find(params);
     } catch (error) {

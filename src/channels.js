@@ -19,6 +19,7 @@ module.exports = function (app) {
 
       // Add it to the authenticated user channel
       app.channel("authenticated").join(connection);
+      app.channel(`user:${user._id.toString()}`).join(connection);
       console.log(app.channel(`authenticated`).length, "authenticated");
       const userRooms = await app
         .service("user-room")
@@ -27,6 +28,11 @@ module.exports = function (app) {
         app.channel(room).join(connection);
       });
     }
+  });
+
+  app.service("contract-report").publish((data) => {
+    console.log(data);
+    return app.channel(data.room);
   });
 
   app.service("notification").on("created", (notification, context) => {
@@ -43,12 +49,11 @@ module.exports = function (app) {
     app.channel(leaveRequest.room).leave(context.params.connection);
   });
 
-  app.service("join-room").publish((data, context) => {
-    return app.channel(data.room).send({
-      ...data,
-      amount: app.channel(data.room).length + (data.type === "join" ? 1 : -1),
-    });
+  app.service("join-room").publish((data) => {
+    console.log(data);
+    return app.channel(data.room);
   });
+
   app.service("assignment-chat").publish(async (data) => {
     return app.channel(`assignment-contract:${data.contract_id}`);
   });
@@ -70,7 +75,6 @@ module.exports = function (app) {
   // });
 
   app.service("assignment-submit").publish("patched", (data) => {
-    console.log(data.contract_id);
     return data.contract_id
       ? app.channel(`assignment-contract:${data.contract_id}`)
       : app.channel(`assignment:${data._id.toString()}`);

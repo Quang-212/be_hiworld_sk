@@ -17,20 +17,12 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
   }
 
   async find(params) {
-    const {
-      user_id,
-      exercise_id,
-      type = "all",
-      $select,
-      $populate,
-    } = params.query;
+    const { user_id, exercise_id, type = "all" } = params.query;
     if (type === "one") {
       return await this.Model.findOne({
         user_id,
         exercise_id,
-      })
-        .populate($populate)
-        .select($select);
+      }).populate("exercise_id");
     }
     return super.find(params);
   }
@@ -48,7 +40,6 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
       ...res,
       language: Object.keys(data),
       contract_id: data.contract_id,
-      typing_user: data.typing_user,
     };
   }
 };
