@@ -24,7 +24,7 @@ module.exports = function (app) {
       const userRooms = await app
         .service("user-room")
         .Model.find({ user_id: user._id.toString() });
-      userRooms.forEach(({ room }, index) => {
+      userRooms.forEach(({ room }) => {
         app.channel(room).join(connection);
       });
     }
@@ -109,7 +109,7 @@ module.exports = function (app) {
       }));
   });
 
-  app.publish((data, hook) => {
+  app.publish(() => {
     return app.channel("authenticated");
   });
 };

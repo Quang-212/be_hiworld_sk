@@ -17,12 +17,12 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
   }
 
   async find(params) {
-    const { user_id, exercise_id, type = "all" } = params.query;
+    const { user, exercise, type = "all" } = params.query;
     if (type === "one") {
       return await this.Model.findOne({
-        user_id,
-        exercise_id,
-      }).populate("exercise_id");
+        user,
+        exercise,
+      }).populate("exercise");
     }
     return super.find(params);
   }

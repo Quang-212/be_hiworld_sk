@@ -3,17 +3,17 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "assignmentComment";
+  const modelName = "assignment_comment";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
       user: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      tag_id: { type: Schema.Types.ObjectId, default: null },
+      tag_user: { type: Schema.Types.ObjectId, default: null, ref: "users" },
       assignment_id: { type: Schema.Types.ObjectId, default: null },
       comment: { type: String, required: true },
       rating: { type: Number, default: null },
-      replyTo: {
+      reply_to: {
         type: Schema.Types.ObjectId,
         default: null,
       },

@@ -7,10 +7,10 @@ exports.UserRanking = class UserRanking extends Service {
   }
   async find(params) {
     try {
-      const { type, user_id } = params.query;
+      const { type, user } = params.query;
       if (type === "one") {
         return await this.Model.findOne({
-          user_id,
+          user,
         });
       }
 

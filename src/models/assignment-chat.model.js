@@ -3,7 +3,7 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "assignmentChat";
+  const modelName = "assignment_chat";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
 

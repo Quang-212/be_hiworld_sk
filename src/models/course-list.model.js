@@ -3,18 +3,18 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "courseList";
+  const modelName = "course_list";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
       title: { type: String, required: true, lowerCase: true },
-      subTitle: { type: String, required: true },
+      sub_title: { type: String, required: true },
       search: { type: String, required: true, lowercase: true },
       slug: { type: String, required: true },
       category: {
         type: Schema.Types.ObjectId,
-        ref: "courseCategory",
+        ref: "course_category",
         required: true,
       },
       description: { type: String, required: true },

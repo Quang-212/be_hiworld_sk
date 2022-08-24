@@ -23,12 +23,12 @@ exports.UserNotification = class UserNotification extends Service {
   async find(params) {
     try {
       const { query } = params;
-      const { assignment_status, owner, type, totalUnRead } = query;
+      const { assignment_status, owner, type, total_unRead } = query;
       const queryOptions = [{ owner }, { ...(type !== "all" && { type }) }];
 
-      if (totalUnRead) {
+      if (total_unRead) {
         return {
-          totalUnRead:
+          total_unRead:
             (await this.Model.find({
               owner,
               read: false,

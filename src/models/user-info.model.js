@@ -3,23 +3,23 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "userInfo";
+  const modelName = "user_info";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      coverPhoto: {
+      cover_photo: {
         url: { type: String, default: "" },
         id: { type: String, default: "" },
       },
       phone: { type: String, default: "-" },
       gender: { type: String, enum: ["male", "female"] },
-      workAt: {
+      work_at: {
         career: { type: String },
         company: { type: String },
       },
       address: { type: String },
-      socialLink: [
+      social_link: [
         {
           provider: { type: String },
           link: { type: String },

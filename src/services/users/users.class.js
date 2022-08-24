@@ -39,17 +39,23 @@ exports.Users = class Users extends Service {
   }
   async create(data, params) {
     const user_id = this.app.get("mongooseClient").Types.ObjectId();
+    const user_info_id = this.app.get("mongooseClient").Types.ObjectId();
     if (data?.googleId || data?.facebookId) {
       data = {
         ...data,
         search: searchString([data.firstName, data.lastName, data.email]),
       };
-      await this.app.service("user-ranking").create({ user_id }, params);
-      const userInfo = await this.app.service("user-info").create(data, params);
-      return super.create(
-        { ...data, userInfo: userInfo._id, _id: user_id },
-        params
-      );
+      const [response] = await Promise.all([
+        super.create(
+          { ...data, user_info: user_info_id, _id: user_id },
+          params
+        ),
+        this.app.service("user-ranking").create({ user_id }, params),
+        this.app
+          .service("user-info")
+          .create({ ...data, _id: user_info_id }, params),
+      ]);
+      return response;
     }
 
     const { email } = data;
@@ -71,15 +77,17 @@ exports.Users = class Users extends Service {
         return "Redirect to verify page";
       } else {
         if (isAdmin(params)) {
-          await this.app.service("user-ranking").create({ user_id }, params);
-          const userInfo = await this.app
-            .service("user-info")
-            .create(data, params);
-          const user = await super.create(
-            { ...data, userInfo: userInfo._id, _id: user_id },
-            params
-          );
-          return { ...user, userInfo };
+          const [user, user_info] = await Promise.all([
+            super.create(
+              { ...data, user_info: user_info_id, _id: user_id },
+              params
+            ),
+            this.app
+              .service("user-info")
+              .create({ ...data, _id: user_info_id }, params),
+            this.app.service("user-ranking").create({ user_id }, params),
+          ]);
+          return { ...user, user_info };
         }
         const aliveCode = await client.get(`code-${email}`);
         if (!aliveCode) {
@@ -87,14 +95,17 @@ exports.Users = class Users extends Service {
             new Error("Mã xác thực của bạn không đúng hoặc đã hết hạn!")
           );
         }
-        await this.app.service("user-ranking").create({ user_id }, params);
-        const userInfo = await this.app
-          .service("user-info")
-          .create(data, params);
-        return super.create(
-          { ...data, userInfo: userInfo._id, _id: user_id },
-          params
-        );
+        const [user] = await Promise.all([
+          super.create(
+            { ...data, user_info: user_info_id, _id: user_id },
+            params
+          ),
+          this.app
+            .service("user-info")
+            .create({ ...data, _id: user_info_id }, params),
+          this.app.service("user-ranking").create({ user_id }, params),
+        ]);
+        return user;
       }
     } catch (error) {
       return new GeneralError(
@@ -107,26 +118,27 @@ exports.Users = class Users extends Service {
   }
   async patch(id, data, params) {
     const authService = new AuthenticationService(this.app);
+
+    const patchUser = async (id, data, params) => {
+      const user = await super.patch(id, data, params);
+      const userInfo = await this.app
+        .service("user-info")
+        .patch(user.user_info, data, params);
+      return { ...user, user_info: userInfo };
+    };
+
     if (data.googleId || data.facebookId) {
       data = {
         ...data,
         // search: searchString([data.firstName, data.lastName, data.email]),
       };
-      const user = await super.patch(id, data, params);
-      const userInfo = await this.app
-        .service("user-info")
-        .patch(user.userInfo, data, params);
-      return { ...user, userInfo };
+      return await patchUser(id, data, params);
     }
     const { email } = data;
 
     try {
       if (isAdmin(params)) {
-        const user = await super.patch(id, data, params);
-        const userInfo = await this.app
-          .service("user-info")
-          .patch(user.userInfo, data, params);
-        return { ...user, userInfo };
+        return await patchUser(id, data, params);
       }
 
       if ((await isAuthenticated(params, authService, id))?.code) {
@@ -135,11 +147,7 @@ exports.Users = class Users extends Service {
           "block-by-cross-action"
         );
       } else if (await isAuthenticated(params, authService, id)) {
-        const user = await super.patch(id, data, params);
-        const userInfo = await this.app
-          .service("user-info")
-          .patch(user.userInfo, data, params);
-        return { ...user, userInfo };
+        return await patchUser(id, data, params);
       }
 
       if (queryChecking(params, "checking")) {
@@ -163,10 +171,7 @@ exports.Users = class Users extends Service {
           if (code !== data.verifyCode) {
             return new Timeout(new Error("Mã xác thực của bạn hết hạn!"));
           }
-          const user = await super.patch(id, data, params);
-          await this.app
-            .service("user-info")
-            .patch(user.userInfo, data, params);
+          await patchUser(id, data, params);
           return "Cập nhật người dùng thành công!";
         }
       }

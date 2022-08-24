@@ -3,13 +3,13 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "assignmentSubmit";
+  const modelName = "assignment_submit";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      user_id: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      exercise_id: {
+      user: { type: Schema.Types.ObjectId, required: true, ref: "users" },
+      exercise: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: "exercise",

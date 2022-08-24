@@ -3,7 +3,7 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "lessonCategory";
+  const modelName = "lesson_category";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
@@ -11,9 +11,9 @@ module.exports = function (app) {
       name: { type: String, required: true, lowercase: true },
       search: { type: String, required: true, lowercase: true },
       description: { type: String, required: true },
-      courseId: {
+      course: {
         type: Schema.Types.ObjectId,
-        ref: "courseList",
+        ref: "course_list",
         required: true,
       },
       slug: { type: String, required: true },

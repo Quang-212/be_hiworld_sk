@@ -3,13 +3,13 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "lessonExercise";
+  const modelName = "lesson_exercise";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      lessonId: { type: Schema.Types.ObjectId, required: true, ref: "lesson" },
-      exerciseId: {
+      lesson: { type: Schema.Types.ObjectId, required: true, ref: "lesson" },
+      exercise: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: "exercise",

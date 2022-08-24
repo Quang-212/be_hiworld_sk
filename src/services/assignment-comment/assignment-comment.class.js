@@ -5,7 +5,7 @@ exports.AssignmentComment = class AssignmentComment extends Service {
     const originalResult = await super.find(params);
     const reply = await Promise.all(
       originalResult.data.map((item) =>
-        this.Model.find({ replyTo: item._id }).exec()
+        this.Model.find({ reply_to: item._id }).exec()
       )
     );
     return {

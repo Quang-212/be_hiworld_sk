@@ -12,10 +12,10 @@ module.exports = function (app) {
     {
       googleId: { type: String, default: "" },
       facebookId: { type: String, default: "" },
-      firstName: { type: String, required: true, lowercase: true },
-      lastName: { type: String, required: true, lowercase: true },
+      first_name: { type: String, required: true, lowercase: true },
+      last_name: { type: String, required: true, lowercase: true },
       search: { type: String, required: true, lowercase: true },
-      profilePhoto: {
+      profile_photo: {
         url: { type: String, default: "" },
         id: { type: String, default: "" },
       },
@@ -26,7 +26,7 @@ module.exports = function (app) {
         default: process.env.DEFAULT_OAUTH_PASSWORD,
       },
       role: { type: String, required: true, default: "newbie" },
-      userInfo: {
+      user_info: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: "userInfo",

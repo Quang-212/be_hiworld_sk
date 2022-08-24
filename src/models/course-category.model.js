@@ -3,16 +3,16 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "courseCategory";
+  const modelName = "course_category";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
       name: { type: String, required: true, lowercase: true },
       search: { type: String, required: true, lowercase: true },
-      parentId: {
+      parent_id: {
         type: Schema.Types.ObjectId,
-        ref: "courseCategory",
+        ref: "course_category",
         default: null,
       },
       slug: { type: String, required: true, lowercase: true },

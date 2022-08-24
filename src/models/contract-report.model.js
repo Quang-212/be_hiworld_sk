@@ -3,7 +3,7 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "contractReport";
+  const modelName = "contract_report";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
@@ -12,7 +12,7 @@ module.exports = function (app) {
       contract: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: "assignmentContract",
+        ref: "assignment_contract",
       },
       type: {
         type: String,

@@ -3,13 +3,13 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "userCourse";
+  const modelName = "user_course";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      userId: { type: Schema.Types.ObjectId, required: true },
-      courseId: { type: Schema.Types.ObjectId, required: true },
+      user_id: { type: Schema.Types.ObjectId, required: true },
+      course_id: { type: Schema.Types.ObjectId, required: true },
       position: { type: Number, default: 0 }, // lesson position in the course
     },
     {

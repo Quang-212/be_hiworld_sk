@@ -3,12 +3,12 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "userNotification";
+  const modelName = "user_notification";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      owner: { type: Schema.Types.ObjectId, required: true, ref: "users" }, // thong bao nay la cua ai
+      owner: { type: Schema.Types.ObjectId, required: true, ref: "users" }, // thong bao nay thuoc ve ai
       sender: { type: Schema.Types.ObjectId, required: true, ref: "users" }, // thong bao duoc gui tu ai
       type: {
         type: String,
