@@ -80,6 +80,21 @@ module.exports = function (app) {
       : app.channel(`assignment:${data._id.toString()}`);
   });
 
+  app.service("assignment-comment").on("created", async (data, context) => {
+    console.log("assignment-comment.on", data, context);
+    return app
+      .channel(`assignment-comment:${data._id.toString()}`)
+      .join(context.params.connection);
+  });
+
+  app.service("assignment-comment").publish("created", async (data) => {
+    console.log("assignment-comment.publish", data);
+    return app.channel("authenticated").send({
+      ...data,
+      user: await app.service("users").get(data.user),
+    });
+  });
+
   app.on("logout", ({ connection }) => {
     if (connection) {
       app.channel("anonymous").join(connection);
