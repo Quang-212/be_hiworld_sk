@@ -8,7 +8,12 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      user: { type: Schema.Types.ObjectId, required: true, ref: "users" },
+      user: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "users",
+        unique: true,
+      },
       score: { type: Number, required: true, default: 100 },
     },
     {

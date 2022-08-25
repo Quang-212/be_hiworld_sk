@@ -61,6 +61,7 @@ module.exports = function (app) {
   app.service("chat-typing").publish((data) => {
     return app.channel(data.room);
   });
+
   // app.service("course-feedback").on("created", (data, context) => {
   //   app
   //     .channel(`course-feedback/${data._id.toString()}`)

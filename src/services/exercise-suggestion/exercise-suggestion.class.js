@@ -9,14 +9,12 @@ exports.ExerciseSuggestion = class ExerciseSuggestion extends Service {
 
   async get(id, params) {
     try {
-      const { user_ranking, assignment_id } = params.query;
+      const { user_ranking_id, assignment_id } = params.query;
 
       const [exerciseSuggestion, userScore] = await Promise.all([
         super.get(id, params),
-        this.app.service("user-ranking").Model.findById(user_ranking), //find by id
+        this.app.service("user-ranking").Model.findById(user_ranking_id), //find by id
       ]);
-
-      console.log(exerciseSuggestion, userScore);
 
       if (
         compareNumber(
@@ -25,13 +23,15 @@ exports.ExerciseSuggestion = class ExerciseSuggestion extends Service {
           "lessEqual"
         )
       ) {
-        return new NotAllowed("Bạn không đủ điểm để thực hiện");
+        throw new NotAllowed("Bạn không đủ điểm để thực hiện");
       }
 
       await Promise.all([
-        this.app.service("user-ranking").Model.findByIdAndUpdate(user_ranking, {
-          $inc: { score: -exerciseSuggestion.minus_score },
-        }),
+        this.app
+          .service("user-ranking")
+          .Model.findByIdAndUpdate(user_ranking_id, {
+            $inc: { score: -exerciseSuggestion.minus_score },
+          }),
         this.app
           .service("assignment-submit")
           .Model.findByIdAndUpdate(assignment_id, {
