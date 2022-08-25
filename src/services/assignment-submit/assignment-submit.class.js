@@ -6,12 +6,12 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
   }
 
   async create(data, params) {
-    const { user_id, exercise_id } = data;
+    const { user, exercise } = data;
     const [assignment] = await Promise.all([
-      super.create({ user_id, exercise_id }, params),
+      super.create({ user, exercise }, params),
       this.app
         .service("user-room")
-        .create({ user_id, room: `exercise-${exercise_id}` }, params),
+        .create({ user_id: user, room: `exercise-${exercise}` }, params),
     ]);
     return assignment;
   }

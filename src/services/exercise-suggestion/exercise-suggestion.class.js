@@ -16,6 +16,8 @@ exports.ExerciseSuggestion = class ExerciseSuggestion extends Service {
         this.app.service("user-ranking").Model.findById(user_ranking), //find by id
       ]);
 
+      console.log(exerciseSuggestion, userScore);
+
       if (
         compareNumber(
           userScore.score,

@@ -50,7 +50,7 @@ exports.Users = class Users extends Service {
           { ...data, user_info: user_info_id, _id: user_id },
           params
         ),
-        this.app.service("user-ranking").create({ user_id }, params),
+        this.app.service("user-ranking").create({ user: user_id }, params),
         this.app
           .service("user-info")
           .create({ ...data, _id: user_info_id }, params),
@@ -85,7 +85,7 @@ exports.Users = class Users extends Service {
             this.app
               .service("user-info")
               .create({ ...data, _id: user_info_id }, params),
-            this.app.service("user-ranking").create({ user_id }, params),
+            this.app.service("user-ranking").create({ user: user_id }, params),
           ]);
           return { ...user, user_info };
         }
@@ -103,7 +103,7 @@ exports.Users = class Users extends Service {
           this.app
             .service("user-info")
             .create({ ...data, _id: user_info_id }, params),
-          this.app.service("user-ranking").create({ user_id }, params),
+          this.app.service("user-ranking").create({ user: user_id }, params),
         ]);
         return user;
       }
