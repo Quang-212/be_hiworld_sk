@@ -24,6 +24,11 @@ const notification = require('./notification/notification.service.js');
 const assignmentContract = require('./assignment-contract/assignment-contract.service.js');
 const userNotification = require('./user-notification/user-notification.service.js');
 const assignmentChat = require('./assignment-chat/assignment-chat.service.js');
+const chatTyping = require('./chat-typing/chat-typing.service.js');
+const joinRoom = require('./join-room/join-room.service.js');
+const exerciseSuggestion = require('./exercise-suggestion/exercise-suggestion.service.js');
+const contractReport = require('./contract-report/contract-report.service.js');
+const scoreHistory = require('./score-history/score-history.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(users);
@@ -52,4 +57,9 @@ module.exports = function (app) {
   app.configure(assignmentContract);
   app.configure(userNotification);
   app.configure(assignmentChat);
+  app.configure(chatTyping);
+  app.configure(joinRoom);
+  app.configure(exerciseSuggestion);
+  app.configure(contractReport);
+  app.configure(scoreHistory);
 };

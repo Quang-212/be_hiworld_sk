@@ -5,8 +5,8 @@ exports.UserCourse = class UserCourse extends Service {
     this.app = app;
   }
   async create(data, params) {
-    const { userId, courseId } = data;
-    const userCourse = await this.Model.findOne({ userId, courseId });
+    const { user_id, course_id } = data;
+    const userCourse = await this.Model.findOne({ user_id, course_id });
     if (userCourse) {
       return "Bạn đã đăng ký khóa học này rồi";
     }

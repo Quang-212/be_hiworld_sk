@@ -8,25 +8,18 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      sender: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      title: { type: String, required: true },
-      type: {
-        type: String,
-        enum: ["assignment", "course-comment", "lesson-comment"],
-        required: true,
-      },
-      assignment_status: {
-        type: String,
-        enum: ["pending", "solving", "solved"],
-      },
-      assignment_id: { type: Schema.Types.ObjectId },
+      //custom data for notification
       room: { type: String, required: true }, // room name
-      message: { type: String },
+      assignment_id: { type: Schema.Types.ObjectId }, // assignment id
+      assignment_status: { type: String },
+      exercise_type: { type: String }, //exercise type
+      contract_id: { type: Schema.Types.ObjectId }, // assignment contract id
     },
     {
       timestamps: true,
     }
   );
+
   // This is necessary to avoid model compilation errors in watch mode
   // see https://mongoosejs.com/docs/api/connection.html#connection_Connection-deleteModel
   if (mongooseClient.modelNames().includes(modelName)) {

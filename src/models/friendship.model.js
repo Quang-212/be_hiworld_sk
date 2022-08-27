@@ -11,9 +11,17 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      requestId: { type: Schema.Types.ObjectId, ref: "users", required: true },
-      receiveId: { type: Schema.Types.ObjectId, ref: "users", required: true },
-      isFollowing: { type: Boolean, default: false },
+      request_user: {
+        type: Schema.Types.ObjectId,
+        ref: "users",
+        required: true,
+      },
+      receive_user: {
+        type: Schema.Types.ObjectId,
+        ref: "users",
+        required: true,
+      },
+      is_following: { type: Boolean, default: false },
       status: {
         type: String,
         enum: ["pending", "accepted", "rejected", "blocked"],

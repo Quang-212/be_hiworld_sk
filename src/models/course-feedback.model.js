@@ -3,18 +3,18 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "courseFeedback";
+  const modelName = "course_feedback";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
 
   const schema = new Schema(
     {
-      userId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      tagId: { type: Schema.Types.ObjectId, default: null },
-      courseId: { type: Schema.Types.ObjectId, default: null },
+      user: { type: Schema.Types.ObjectId, required: true, ref: "users" },
+      tag_user: { type: Schema.Types.ObjectId, default: null, ref: "users" },
+      course_id: { type: Schema.Types.ObjectId, required: true },
       comment: { type: String, required: true },
       rating: { type: Number, default: null },
-      replyTo: {
+      reply_to: {
         type: Schema.Types.ObjectId,
         default: null,
       },

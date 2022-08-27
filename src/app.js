@@ -60,12 +60,12 @@ app.configure(express.rest());
 app.configure(
   socketio(function (io) {
     io.on("connection", function (socket) {
-      //join-leave assignment-submit-room
-      socket.on("join-assignment-room", (data) => {
-        app.channel(`assignment-${data._id}`).join(socket.feathers);
+      //join-leave room by event from client
+      socket.on("join-room", ({ room }) => {
+        app.channel(room).join(socket.feathers);
       });
-      socket.on("leave-assignment-room", (data) => {
-        app.channel(`assignment-${data._id}`).leave(socket.feathers);
+      socket.on("leave-room", ({ room }) => {
+        app.channel(room).leave(socket.feathers);
       });
     });
     // Registering Socket.io middleware
@@ -76,7 +76,6 @@ app.configure(
     });
   })
 );
-
 app.configure(mongoose);
 
 // Configure other middleware (see `middleware/index.js`)

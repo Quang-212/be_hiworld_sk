@@ -3,13 +3,18 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const modelName = "userRanking";
+  const modelName = "user_ranking";
   const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      userId: { type: Schema.Types.ObjectId, required: true, ref: "users" },
-      score: { type: Number, required: true, default: 0 },
+      user: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "users",
+        unique: true,
+      },
+      score: { type: Number, required: true, default: 100 },
     },
     {
       timestamps: true,

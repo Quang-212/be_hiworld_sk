@@ -30,6 +30,12 @@ class Timeout extends FeathersError {
     super(message, "Timeout", 408, "time-out", data);
   }
 }
+
+class NotAllowed extends FeathersError {
+  constructor(message, data) {
+    super(message, "NotAllowed", 405, "not-allowed", data);
+  }
+}
 module.exports = {
   ExistOAuthUser,
   Exist409,
@@ -37,4 +43,5 @@ module.exports = {
   Timeout,
   NotAuthenticated,
   Forbidden,
+  NotAllowed,
 };

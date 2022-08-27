@@ -35,30 +35,31 @@ exports.RefreshToken = class RefreshToken {
             role,
           },
           {
-            expiresIn: process.env.REFRESH_TOKEN_TIME,
+            expiresIn: process.env.REFRESH_TOKEN_STRING_TIME,
           },
           process.env.SECRET_REFRESH_TOKEN
         );
       };
       const newRefreshToken = await signRefreshToken();
       if (queryChecking(params, "login")) {
-        await redis.set(
-          `token-${params?.provider}-${_id}`,
-          newRefreshToken,
-          "EX",
-          3600 * 24 * 365
-        );
-        return "Created refresh token";
+        const existToken = await redis.exists(`token:${_id}`);
+        if (existToken) {
+          await redis.incrBy(`token-quantity:${_id}`, 1);
+        }
+        await Promise.all([
+          redis.set(`token:${_id}`, newRefreshToken, "EX", 3600 * 24 * 365),
+          redis.set(`token-quantity:${_id}`, 1, "EX", 3600 * 24 * 365),
+        ]);
+
+        return "Created rf_token";
       } else {
-        const refreshToken = cookie("refreshToken", params);
-        const existRefreshToken = await redis.get(
-          `token-${params?.provider}-${_id}`
-        );
-        if (existRefreshToken && existRefreshToken === refreshToken) {
+        const refreshToken = cookie("rf_token", params);
+        const existRefreshToken = await redis.get(`token:${_id}`);
+        if (existRefreshToken === refreshToken) {
           const payload = await authService.verifyAccessToken(
             refreshToken,
             {
-              expiresIn: process.env.REFRESH_TOKEN_TIME,
+              expiresIn: process.env.REFRESH_TOKEN_STRING_TIME,
             },
             process.env.SECRET_REFRESH_TOKEN
           );
@@ -83,10 +84,18 @@ exports.RefreshToken = class RefreshToken {
   }
   async remove(id, params) {
     try {
-      await redis.del(
-        `token-${params?.provider}-${params.user._id.toString()}`
+      const tokenQuantity = await redis.get(
+        `token-quantity:${params.user._id.toString()}`
       );
-      return "Deleted refresh token";
+      if (+tokenQuantity > 1) {
+        await redis.incrBy(`token-quantity:${params.user._id.toString()}`, -1);
+      } else {
+        await Promise.all([
+          redis.del(`token:${params.user._id.toString()}`),
+          redis.del(`token-quantity:${params.user._id.toString()}`),
+        ]);
+      }
+      return "Deleted refresh token OK";
     } catch (error) {
       return new GeneralError(new Error(error || "Lỗi hệ thống!"));
     }

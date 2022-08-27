@@ -6,28 +6,40 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
   }
 
   async create(data, params) {
-    const { userId, exerciseId } = data;
+    const { user, exercise } = data;
     const [assignment] = await Promise.all([
-      this.Model.create({ userId, exerciseId }),
+      super.create({ user, exercise }, params),
       this.app
         .service("user-room")
-        .create({ user_id: userId, room: `exercise-${exerciseId}` }, params),
+        .create({ user_id: user, room: `exercise-${exercise}` }, params),
     ]);
     return assignment;
   }
 
   async find(params) {
-    const { userId, exerciseId, type = "all" } = params.query;
+    const { user, exercise, type = "all" } = params.query;
     if (type === "one") {
-      return await this.Model.findOne({ userId, exerciseId });
+      return await this.Model.findOne({
+        user,
+        exercise,
+      }).populate("exercise");
     }
     return super.find(params);
   }
+
   async patch(id, data, params) {
+    const { suggestion_step } = data;
+    if (suggestion_step !== undefined) {
+      return await this.Model.findByIdAndUpdate(id, data, { new: true }).select(
+        "suggestion_step"
+      );
+    }
+
     const res = await super.patch(id, data, params);
     return {
       ...res,
       language: Object.keys(data),
+      contract_id: data.contract_id,
     };
   }
 };

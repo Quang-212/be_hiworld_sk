@@ -18,10 +18,11 @@ module.exports = function (app) {
         required: true,
       },
       requirement: { type: String, required: true },
-      codeRules: { type: String },
+      code_rules: { type: String },
       options: { type: String },
       result: { type: String, required: true },
       deleted: { type: Boolean, default: false },
+      plus_score: { type: Number, required: true, default: 5 },
     },
     {
       timestamps: true,

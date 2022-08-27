@@ -5,38 +5,47 @@ exports.LessonExercise = class LessonExercise extends Service {
     this.app = app;
   }
   async create(data, params) {
-    const { lessonId, order } = data;
-    const newExercise = await this.app.service("exercise").create(data, params);
-    const lessonExercise = await super.create(
-      {
-        lessonId,
-        exerciseId: newExercise._id.toString(),
-        order,
-      },
-      params
-    );
-    return {
-      ...lessonExercise,
-      lessonId: await this.app.service("lesson").get(lessonId, params),
-      exerciseId: newExercise,
-    };
-  }
-  async patch(id, data, params) {
-    const { exerciseId, lessonId } = params.query;
-    const [exercise, lessonExercise] = await Promise.all([
-      this.app.service("exercise").patch(exerciseId, data, params),
-      super.patch(id, data, params),
+    const { lesson, order } = data;
+    const _id = this.app.get("mongooseClient").Types.ObjectId();
+    const [newExercise, lessonExercise] = await Promise.all([
+      this.app.service("exercise").create(
+        {
+          ...data,
+          _id,
+        },
+        params
+      ),
+      super.create(
+        {
+          lesson,
+          exercise: _id,
+          order,
+        },
+        params
+      ),
     ]);
     return {
       ...lessonExercise,
-      lessonId: await this.app.service("lesson").get(lessonId, params),
-      exerciseId: exercise,
+      lesson: await this.app.service("lesson").get(lesson, params),
+      exercise: newExercise,
+    };
+  }
+  async patch(id, data, params) {
+    const { exercise, lesson } = params.query;
+    const [patchedExercise, patchedLessonExercise] = await Promise.all([
+      this.app.service("exercise").patch(exercise, data, params),
+      super.patch(id, data, params),
+    ]);
+    return {
+      ...patchedLessonExercise,
+      lesson: await this.app.service("lesson").get(lesson, params),
+      exercise: patchedExercise,
     };
   }
   async remove(id, params) {
-    const { exerciseId } = params.query;
+    const { exercise } = params.query;
     await Promise.all([
-      this.app.service("exercise").remove(exerciseId, params),
+      this.app.service("exercise").remove(exercise, params),
       super.remove(id, params),
     ]);
     return "Xóa bài tập thành công";

@@ -18,24 +18,18 @@ module.exports = function (app) {
           res.hook.params.query?.logout &&
           JSON.parse(res.hook.params.query?.logout)
         ) {
-          res.clearCookie("refreshToken");
+          res.clearCookie("rf_token");
           return next();
         }
-        res.cookie(
-          "refreshToken",
-          await client.get(
-            `token-${res.hook.params?.provider}-${req.body._id}`
-          ),
-          {
-            httpOnly: true,
-            secure: false,
-            maxAge: 1000 * 3600 * 24 * 365,
-            sameSite: "lax",
-          }
-        );
+        res.cookie("rf_token", await client.get(`token:${req.body._id}`), {
+          httpOnly: true,
+          secure: false,
+          maxAge: 1000 * 3600 * 24 * 365,
+          sameSite: "lax",
+        });
         return next();
       } catch (error) {
-        next(error);
+        return next(error);
       }
     }
   );
