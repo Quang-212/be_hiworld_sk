@@ -26,6 +26,7 @@ module.exports = function (app) {
           secure: false,
           maxAge: 1000 * 3600 * 24 * 365,
           sameSite: "lax",
+          domain: "quatangtaodo.com",
         });
         return next();
       } catch (error) {
