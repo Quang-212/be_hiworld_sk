@@ -4,7 +4,11 @@ const { GeneralError } = require("@feathersjs/errors");
 const { queryChecking } = require("../../utils/query-checking");
 const cookie = require("../../utils/get-cookie-value");
 const { NotAuthenticated } = require("../../lib/error-handling");
-const redis = require("../../redis");
+// const redis = require("../../redis");
+
+const Redis = require("ioredis");
+
+const redis = new Redis();
 exports.RefreshToken = class RefreshToken {
   constructor(options) {
     this.options = options || {};
@@ -44,17 +48,21 @@ exports.RefreshToken = class RefreshToken {
       if (queryChecking(params, "login")) {
         const existToken = await redis.exists(`token:${_id}`);
         if (existToken) {
-          await redis.incrBy(`token-quantity:${_id}`, 1);
+          await redis.incrby(`token-quantity:${_id}`, 1);
+        } else {
+          await Promise.all([
+            redis.set(`token:${_id}`, newRefreshToken, "EX", 3600 * 24 * 365),
+            redis.set(`token-quantity:${_id}`, 1, "EX", 3600 * 24 * 365),
+          ]);
         }
-        await Promise.all([
-          redis.set(`token:${_id}`, newRefreshToken, "EX", 3600 * 24 * 365),
-          redis.set(`token-quantity:${_id}`, 1, "EX", 3600 * 24 * 365),
-        ]);
 
         return "Created rf_token";
       } else {
         const refreshToken = cookie("rf_token", params);
         const existRefreshToken = await redis.get(`token:${_id}`);
+        console.log("refreshtoken", refreshToken);
+        console.log("exist", existRefreshToken);
+        console.log("id", _id);
         if (existRefreshToken === refreshToken) {
           const payload = await authService.verifyAccessToken(
             refreshToken,
@@ -88,7 +96,7 @@ exports.RefreshToken = class RefreshToken {
         `token-quantity:${params.user._id.toString()}`
       );
       if (+tokenQuantity > 1) {
-        await redis.incrBy(`token-quantity:${params.user._id.toString()}`, -1);
+        await redis.incrby(`token-quantity:${params.user._id.toString()}`, -1);
       } else {
         await Promise.all([
           redis.del(`token:${params.user._id.toString()}`),

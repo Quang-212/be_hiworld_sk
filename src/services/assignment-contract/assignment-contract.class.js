@@ -58,6 +58,7 @@ exports.AssignmentContract = class AssignmentContract extends Service {
             {
               ...contract,
               accepter,
+              status: "progressing",
             },
             params
           ),

@@ -9,24 +9,27 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
+  const actionChecking = (res, action) =>
+    res.hook.params.query[action] && JSON.parse(res.hook.params.query[action]);
+
   app.use(
     "/refresh-token",
     new RefreshToken(options, app),
     async (req, res, next) => {
       try {
-        if (
-          res.hook.params.query?.logout &&
-          JSON.parse(res.hook.params.query?.logout)
-        ) {
+        if (actionChecking(res, "logout")) {
           res.clearCookie("rf_token");
           return next();
         }
-        res.cookie("rf_token", await client.get(`token:${req.body._id}`), {
-          httpOnly: true,
-          secure: false,
-          maxAge: 1000 * 3600 * 24 * 365,
-          sameSite: "lax",
-        });
+        if (actionChecking(res, "login")) {
+          res.cookie("rf_token", await client.get(`token:${req.body._id}`), {
+            httpOnly: true,
+            secure: false,
+            maxAge: 1000 * 3600 * 24 * 365,
+            sameSite: "lax",
+          });
+          return next();
+        }
         return next();
       } catch (error) {
         return next(error);
