@@ -33,6 +33,7 @@ app.use(
 app.use(
   cors({
     origin: [
+      "http://localhost:3034",
       "http://localhost:3039",
       "http://admin.quatangtaodo.com",
       process.env.SECRET_ADMIN_DOMAIN,
