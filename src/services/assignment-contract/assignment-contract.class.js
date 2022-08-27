@@ -65,7 +65,7 @@ exports.AssignmentContract = class AssignmentContract extends Service {
           this.app
             .service("notification")
             .Model.findByIdAndUpdate(notification_id, {
-              assignment_status: "solving",
+              assignment_status: "progressing",
             })
             .exec(),
         ]);
@@ -83,7 +83,7 @@ exports.AssignmentContract = class AssignmentContract extends Service {
         this.Model.find({ assignment_id }).exec(),
       ]);
       const solvingAssignment = mongo_assignment.find(
-        (assignment) => assignment.status === "solving"
+        (assignment) => assignment.status === "progressing"
       );
       if (redis_assignment) {
         return {
