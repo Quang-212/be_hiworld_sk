@@ -9,15 +9,15 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
+  const actionChecking = (res, action) =>
+    res.hook.params.query[action] && JSON.parse(res.hook.params.query[action]);
+
   app.use(
     "/refresh-token",
     new RefreshToken(options, app),
     async (req, res, next) => {
       try {
-        if (
-          res.hook.params.query?.logout &&
-          JSON.parse(res.hook.params.query?.logout)
-        ) {
+        if (actionChecking(res, "logout")) {
           res.clearCookie("rf_token");
           return next();
         }
