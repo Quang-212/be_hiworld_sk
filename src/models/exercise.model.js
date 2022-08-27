@@ -22,6 +22,7 @@ module.exports = function (app) {
       options: { type: String },
       result: { type: String, required: true },
       deleted: { type: Boolean, default: false },
+      plus_score: { type: Number, required: true, default: 5 },
     },
     {
       timestamps: true,

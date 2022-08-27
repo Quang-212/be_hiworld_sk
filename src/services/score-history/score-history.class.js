@@ -4,7 +4,7 @@ exports.ScoreHistory = class ScoreHistory extends Service {
   async create(data, params) {
     const { create_type = "one" } = params.query;
     if (create_type === "many") {
-      return await this.Model.insertMany(data).exec();
+      return await this.Model.insertMany(data);
     }
     return super.create(data, params);
   }

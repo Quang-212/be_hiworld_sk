@@ -26,12 +26,12 @@ exports.UserRanking = class UserRanking extends Service {
 
   async patch(id, data, params) {
     const { score_type, user } = params.query;
-    const availableScore =
-      (await this.Model.findOne({ user }).exec()).score > data.amount;
-    if (!availableScore) {
-      throw new NotAllowed("Không đủ điểm");
-    }
 
+    const availableScore =
+      (await this.Model.findOne({ user }).exec())?.score > data.amount;
+    if (!availableScore && score_type === "minus") {
+      throw new NotAllowed("Bạn không đủ điểm");
+    }
     if (score_type) {
       return await this.Model.findOneAndUpdate(
         { user },
