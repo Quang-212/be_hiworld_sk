@@ -7,9 +7,9 @@ exports.UserNotification = class UserNotification extends Service {
   }
   async patch(id, data, params) {
     try {
-      const { type = "one" } = params.query;
-      if (type === "all") {
-        return await this.Model.updateMany({ owner: data.owner }, data);
+      const { patch_type = "one", owner } = params.query;
+      if (patch_type === "all") {
+        return await this.Model.updateMany({ owner }, data);
       }
       return await this.Model.findByIdAndUpdate(id, data);
     } catch (error) {
@@ -23,8 +23,8 @@ exports.UserNotification = class UserNotification extends Service {
   async find(params) {
     try {
       const { query } = params;
-      const { assignment_status, owner, type, total_unRead } = query;
-      const queryOptions = [{ owner }, { ...(type !== "all" && { type }) }];
+      const { contract_status, owner, type, total_unRead, $limit, $skip } =
+        params.query;
 
       if (total_unRead) {
         return {
@@ -36,28 +36,25 @@ exports.UserNotification = class UserNotification extends Service {
         };
       }
 
-      if (assignment_status && type) {
-        const notification = await this.app
-          .service("notification")
-          .Model.find({ assignment_status })
-          .select("_id");
+      if (contract_status && type) {
+        const contractsByStatus = await this.app
+          .service("assignment-contract")
+          .Model.find({ status: contract_status })
+          .select("_id")
+          .sort({
+            createdAt: -1,
+          })
+          .limit($limit)
+          .skip($skip);
 
-        const notification_id = notification.map((item) => item._id.toString());
+        const contractIds = contractsByStatus.map((contract) =>
+          contract._id.toString()
+        );
 
         return super.find({
           ...params,
           query: {
-            $and: [...queryOptions, { notification: { $in: notification_id } }],
-            ...query,
-          },
-        });
-      }
-
-      if (!assignment_status && type) {
-        return super.find({
-          ...params,
-          query: {
-            $and: queryOptions,
+            contract: { $in: contractIds },
             ...query,
           },
         });

@@ -4,11 +4,7 @@ const { GeneralError } = require("@feathersjs/errors");
 const { queryChecking } = require("../../utils/query-checking");
 const cookie = require("../../utils/get-cookie-value");
 const { NotAuthenticated } = require("../../lib/error-handling");
-// const redis = require("../../redis");
-
-const Redis = require("ioredis");
-
-const redis = new Redis();
+const redis = require("../../redis");
 exports.RefreshToken = class RefreshToken {
   constructor(options) {
     this.options = options || {};

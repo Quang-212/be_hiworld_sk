@@ -39,81 +39,83 @@ exports.AssignmentContract = class AssignmentContract extends Service {
 
   async patch(id, data, params) {
     try {
-      const { assignment_id, notification_id, accepter = null } = data;
-      const existing = await redis.get(`assignment-contract:${assignment_id}`);
-      if (!existing) {
-        return {
-          code: 404,
-        };
-      }
-      const contract = existing && JSON.parse(existing);
-      if (contract.accepter) {
-        return {
-          code: 409,
-        };
-      }
-      if (existing && contract._id === id) {
+      const { assignment_id, helper = null } = data;
+      const { patch_type = null } = params.query;
+
+      if (patch_type === "accept_contract") {
+        const redisContract = await redis.get(
+          `assignment-contract:${assignment_id}`
+        );
+        if (!redisContract) {
+          return {
+            code: 404,
+          };
+        }
+
+        const solvingContract = await this.Model.findOne({
+          assignment_id,
+          status: "progressing",
+        });
+
+        if (solvingContract) {
+          return {
+            code: 405,
+          };
+        }
         await Promise.all([
-          super.create(
-            {
-              ...contract,
-              accepter,
-              status: "progressing",
-            },
-            params
-          ),
           redis.del(`assignment-contract:${assignment_id}`),
-          this.app
-            .service("notification")
-            .Model.findByIdAndUpdate(notification_id, {
-              assignment_status: "progressing",
-            })
-            .exec(),
+          this.Model.findByIdAndUpdate(id, {
+            status: "progressing",
+            helper,
+          }),
         ]);
+        return { code: 200 };
       }
-      return { code: 200 };
+      return super.patch(id, data, params);
     } catch (error) {
       return new Error(error);
     }
   }
   async create(data, params) {
     const { assignment_id } = data;
+
     try {
-      const [redis_assignment, mongo_assignment] = await Promise.all([
+      const [waitingContract, solvingContract] = await Promise.all([
         redis.get(`assignment-contract:${assignment_id}`),
-        this.Model.find({ assignment_id }).exec(),
+        this.Model.findOne({ assignment_id }),
       ]);
-      const solvingAssignment = mongo_assignment.find(
-        (assignment) => assignment.status === "progressing"
-      );
-      if (redis_assignment) {
+
+      if (waitingContract) {
         return {
-          code: 409,
+          code: 405,
           source: "redis",
           ttl: await redis.ttl(`assignment-contract:${assignment_id}`),
         };
       }
-      if (solvingAssignment) {
+
+      if (solvingContract.status === "progressing") {
         return {
-          code: 409,
+          code: 405,
           source: "mongo",
         };
       }
-      const new_id = this.app.get("mongooseClient").Types.ObjectId();
-      const contractTime = 60 * 10;
+
+      if (solvingContract.status === "pending") {
+        await this.Model.findByIdAndUpdate(solvingContract._id, {
+          status: "timeout",
+        });
+      }
+
+      const _id = this.app.get("mongooseClient").Types.ObjectId();
+
+      const contractWaitingTime = 60 * 10;
       await redis.set(
         `assignment-contract:${assignment_id}`,
-        JSON.stringify({
-          ...data,
-          _id: new_id,
-        }),
+        JSON.stringify({ ...data, _id }),
         "EX",
-        contractTime
+        contractWaitingTime
       );
-      return {
-        ...data,
-        _id: new_id,
-      };
+      return super.create({ ...data, _id }, params);
     } catch (error) {
       return new Error(error);
     }
