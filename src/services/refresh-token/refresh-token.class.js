@@ -56,9 +56,6 @@ exports.RefreshToken = class RefreshToken {
       } else {
         const refreshToken = cookie("rf_token", params);
         const existRefreshToken = await redis.get(`token:${_id}`);
-        console.log("refreshtoken", refreshToken);
-        console.log("exist", existRefreshToken);
-        console.log("id", _id);
         if (existRefreshToken === refreshToken) {
           const payload = await authService.verifyAccessToken(
             refreshToken,

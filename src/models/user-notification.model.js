@@ -17,9 +17,9 @@ module.exports = function (app) {
       },
       title: { type: String, required: true },
       message: { type: String, required: true },
-      notification: {
+      contract: {
         type: Schema.Types.ObjectId,
-        ref: "notification",
+        ref: "assignment_contract",
       },
       read: { type: Boolean, required: true, default: false },
     },

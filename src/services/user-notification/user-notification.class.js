@@ -51,6 +51,8 @@ exports.UserNotification = class UserNotification extends Service {
           contract._id.toString()
         );
 
+        console.log(contractIds);
+
         return super.find({
           ...params,
           query: {

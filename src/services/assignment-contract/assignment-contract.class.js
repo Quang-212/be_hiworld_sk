@@ -79,6 +79,8 @@ exports.AssignmentContract = class AssignmentContract extends Service {
   async create(data, params) {
     const { assignment_id } = data;
 
+    console.log(assignment_id);
+
     try {
       const [waitingContract, solvingContract] = await Promise.all([
         redis.get(`assignment-contract:${assignment_id}`),
@@ -93,14 +95,14 @@ exports.AssignmentContract = class AssignmentContract extends Service {
         };
       }
 
-      if (solvingContract.status === "progressing") {
+      if (solvingContract?.status === "progressing") {
         return {
           code: 405,
           source: "mongo",
         };
       }
 
-      if (solvingContract.status === "pending") {
+      if (solvingContract?.status === "pending") {
         await this.Model.findByIdAndUpdate(solvingContract._id, {
           status: "timeout",
         });
@@ -115,8 +117,9 @@ exports.AssignmentContract = class AssignmentContract extends Service {
         "EX",
         contractWaitingTime
       );
-      return super.create({ ...data, _id }, params);
+      return await super.create({ ...data, _id }, params);
     } catch (error) {
+      console.log(error);
       return new Error(error);
     }
   }

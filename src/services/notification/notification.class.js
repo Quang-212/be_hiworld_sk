@@ -8,7 +8,7 @@ exports.Notification = class Notification extends Service {
     try {
       const _id = this.app.get("mongooseClient").Types.ObjectId();
 
-      const { room, sender, owner } = data;
+      const { room, sender, owner, contract_id } = data;
 
       const usersInRoom =
         sender === owner
@@ -26,7 +26,7 @@ exports.Notification = class Notification extends Service {
           [...new Set(usersInRoom.map((user) => user.user_id.toString()))].map(
             (user_id) => ({
               owner: user_id,
-              notification: _id,
+              contract: contract_id,
               ...data,
             })
           )
