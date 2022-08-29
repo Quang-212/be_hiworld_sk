@@ -35,11 +35,11 @@ module.exports = function (app) {
     return app.channel(data.room);
   });
 
-  app.service("notification").on("created", (notification, context) => {
-    app.channel(notification.room).join(context.params.connection);
+  app.service("user-notification").on("created", (data, context) => {
+    app.channel(data.room).join(context.params.connection);
   });
 
-  app.service("notification").publish((data) => app.channel(data.room));
+  app.service("user-notification").publish((data) => app.channel(data.room));
 
   app.service("join-room").on("created", (joinRequest, context) => {
     app.channel(joinRequest.room).join(context.params.connection);

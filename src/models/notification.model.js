@@ -10,10 +10,10 @@ module.exports = function (app) {
     {
       //custom data for notification
       room: { type: String, required: true }, // room name
-      assignment_id: { type: Schema.Types.ObjectId }, // assignment id
-      assignment_status: { type: String },
+      // assignment_id: { type: Schema.Types.ObjectId }, // assignment id
+      // contract_status: { type: String, enum: [] },
       exercise_type: { type: String }, //exercise type
-      contract_id: { type: Schema.Types.ObjectId }, // assignment contract id
+      // contract_id: { type: Schema.Types.ObjectId }, // assignment contract id
     },
     {
       timestamps: true,

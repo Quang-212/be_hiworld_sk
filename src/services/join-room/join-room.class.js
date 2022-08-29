@@ -1,4 +1,5 @@
 const { isEmpty } = require("lodash");
+const redis = require("../../redis");
 
 /* eslint-disable no-unused-vars */
 exports.JoinRoom = class JoinRoom {
@@ -19,9 +20,10 @@ exports.JoinRoom = class JoinRoom {
   }
 
   async create(data, params) {
+    const existsRoom = redis.exists(`room:${data.room}`);
     return {
       ...data,
-      amount: (await this.app.channel(data.room).length) + 1,
+      amount: data.amount || (await this.app.channel(data.room).length) + 1,
     };
   }
 
@@ -39,7 +41,9 @@ exports.JoinRoom = class JoinRoom {
     }
     return {
       ...params.query,
-      amount: (await this.app.channel(params.query.room).length) - 1,
+      amount:
+        params.query.amount ||
+        (await this.app.channel(params.query.room).length) - 1,
     };
   }
 };

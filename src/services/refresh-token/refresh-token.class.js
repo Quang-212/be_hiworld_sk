@@ -4,7 +4,11 @@ const { GeneralError } = require("@feathersjs/errors");
 const { queryChecking } = require("../../utils/query-checking");
 const cookie = require("../../utils/get-cookie-value");
 const { NotAuthenticated } = require("../../lib/error-handling");
-const redis = require("../../redis");
+// const redis = require("../../redis");
+
+const Redis = require("ioredis");
+
+const redis = new Redis();
 exports.RefreshToken = class RefreshToken {
   constructor(options) {
     this.options = options || {};
@@ -51,6 +55,7 @@ exports.RefreshToken = class RefreshToken {
             redis.set(`token-quantity:${_id}`, 1, "EX", 3600 * 24 * 365),
           ]);
         }
+
         return "Created rf_token";
       } else {
         const refreshToken = cookie("rf_token", params);

@@ -1,5 +1,6 @@
 const redis = require("../../redis");
 const { Service } = require("feathers-mongoose");
+const { NotAllowed } = require("../../lib/error-handling");
 
 /* eslint-disable no-unused-vars */
 exports.AssignmentContract = class AssignmentContract extends Service {
@@ -9,21 +10,16 @@ exports.AssignmentContract = class AssignmentContract extends Service {
 
   async find(params) {
     try {
-      const {
-        temporary = true,
-        assignment_id,
-        find_type = "all",
-        user_id,
-      } = params.query;
+      const { assignment_id, find_type = null, user_id } = params.query;
 
-      if (temporary) {
+      if (find_type === "temporary") {
         const contract = await redis.get(
           `assignment-contract:${assignment_id}`
         );
         return (contract && JSON.parse(contract)) || null;
       }
 
-      if (find_type === "one") {
+      if (find_type === "progressing") {
         return await this.Model.findOne({
           $and: [
             { $or: [{ sender: user_id }, { accepter: user_id }] },
@@ -39,38 +35,46 @@ exports.AssignmentContract = class AssignmentContract extends Service {
 
   async patch(id, data, params) {
     try {
-      const { assignment_id, notification_id, accepter = null } = data;
+      const { patch_type = null } = params.query;
+
+      const { assignment_id, accepter = null } = data;
       const existing = await redis.get(`assignment-contract:${assignment_id}`);
       if (!existing) {
         return {
           code: 404,
         };
       }
+
       const contract = existing && JSON.parse(existing);
-      if (contract.accepter) {
-        return {
-          code: 409,
-        };
+      if (patch_type === "accept_contract") {
+        const contract = await this.Model.findById(id);
+        if (contract?.helper) {
+          throw new NotAllowed("Đã có người giúp đỡ trước đó");
+        }
+        await this.Model.findByIdAndUpdate(
+          id,
+          { status: "progressing" },
+          { new: true }
+        );
+        return "assignment-contract-patch-OK";
       }
-      if (existing && contract._id === id) {
-        await Promise.all([
-          super.create(
-            {
-              ...contract,
-              accepter,
-            },
-            params
-          ),
-          redis.del(`assignment-contract:${assignment_id}`),
-          this.app
-            .service("notification")
-            .Model.findByIdAndUpdate(notification_id, {
-              assignment_status: "progressing",
-            })
-            .exec(),
-        ]);
-      }
-      return { code: 200 };
+
+      return super.patch(id, data, params);
+
+      // if (existing && contract._id === id) {
+      //   await Promise.all([
+      //     super.create(
+      //       {
+      //         ...contract,
+      //         accepter,
+      //         status: "progressing",
+      //       },
+      //       params
+      //     ),
+      //     redis.del(`assignment-contract:${assignment_id}`),
+      //   ]);
+      //   return { code: 200 };
+      // }
     } catch (error) {
       return new Error(error);
     }
@@ -78,41 +82,19 @@ exports.AssignmentContract = class AssignmentContract extends Service {
   async create(data, params) {
     const { assignment_id } = data;
     try {
-      const [redis_assignment, mongo_assignment] = await Promise.all([
-        redis.get(`assignment-contract:${assignment_id}`),
-        this.Model.find({ assignment_id }).exec(),
-      ]);
-      const solvingAssignment = mongo_assignment.find(
-        (assignment) => assignment.status === "progressing"
-      );
-      if (redis_assignment) {
+      const solvingContract = await this.Model.findOne({
+        assignment_id,
+        status: "progressing",
+      }).exec();
+
+      if (solvingContract) {
         return {
           code: 409,
-          source: "redis",
-          ttl: await redis.ttl(`assignment-contract:${assignment_id}`),
+          ttl: solvingContract.createdAt,
         };
       }
-      if (solvingAssignment) {
-        return {
-          code: 409,
-          source: "mongo",
-        };
-      }
-      const new_id = this.app.get("mongooseClient").Types.ObjectId();
-      const contractTime = 60 * 10;
-      await redis.set(
-        `assignment-contract:${assignment_id}`,
-        JSON.stringify({
-          ...data,
-          _id: new_id,
-        }),
-        "EX",
-        contractTime
-      );
-      return {
-        ...data,
-        _id: new_id,
-      };
+
+      return super.create(data, params);
     } catch (error) {
       return new Error(error);
     }
