@@ -70,13 +70,14 @@ exports.UserNotification = class UserNotification extends Service {
           ...params,
           query: {
             contract: { $in: contractIds },
-            ...query,
+            ...params.query,
           },
         });
       }
 
       return super.find(params);
     } catch (error) {
+      console.log(error);
       return new Error(error);
     }
   }

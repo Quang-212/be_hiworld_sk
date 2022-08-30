@@ -10,7 +10,7 @@ exports.AssignmentContract = class AssignmentContract extends Service {
 
   async find(params) {
     try {
-      const { assignment_id, find_type = null, user_id } = params.query;
+      const { assignment_id, find_type = null } = params.query;
 
       if (find_type === "temporary") {
         const contract = await redis.get(
@@ -19,18 +19,26 @@ exports.AssignmentContract = class AssignmentContract extends Service {
         return (contract && JSON.parse(contract)) || null;
       }
 
-      if (find_type === "progressing") {
-        return await this.Model.findOne({
-          $and: [
-            { $or: [{ sender: user_id }, { helper: user_id }] },
-            { type: "progressing" },
-          ],
-        }).exec();
-      }
       return super.find(params);
     } catch (error) {
       return new Error(error);
     }
+  }
+  async get(id, params) {
+    const { get_type = null } = params.query;
+
+    if (get_type === "countMember") {
+      const [membersCount, contract] = await Promise.all([
+        this.app.channel(`assignment-contract:${id}`).length,
+        this.Model.findById(id).exec(),
+      ]);
+      return {
+        membersCount,
+        status: contract?.status,
+      };
+    }
+
+    return super.get(id, params);
   }
 
   async patch(id, data, params) {
@@ -67,15 +75,17 @@ exports.AssignmentContract = class AssignmentContract extends Service {
         ]);
         return { code: 200 };
       }
-      return super.patch(id, data, params);
+      const response = await super.patch(id, data, params);
+      return {
+        ...response,
+        membersCount: await this.app.channel(`assignment-contract:${id}`),
+      };
     } catch (error) {
       return new Error(error);
     }
   }
   async create(data, params) {
     const { assignment_id } = data;
-
-    console.log(assignment_id);
 
     try {
       const [waitingContract, solvingContract] = await Promise.all([

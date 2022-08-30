@@ -22,7 +22,7 @@ module.exports = function (app) {
         default: "pending",
       },
       is_solved: { type: Boolean, default: false, required: true },
-      helper: { type: Schema.Types.ObjectId, required: true },
+      helper: { type: Schema.Types.ObjectId, default: null },
       content: { type: String, required: true },
     },
     {

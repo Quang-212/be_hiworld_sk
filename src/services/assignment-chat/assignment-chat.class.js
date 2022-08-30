@@ -13,6 +13,10 @@ exports.AssignmentChat = class AssignmentChat extends Service {
     if (members === 1) {
       throw new Error("Không có ai trong cuộc trò chuyện!");
     }
-    return super.create(data, params);
+    const newMessage = await super.create(data, params);
+    return {
+      ...newMessage,
+      room: data.room,
+    };
   }
 };
