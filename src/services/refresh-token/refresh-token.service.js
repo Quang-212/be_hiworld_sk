@@ -1,5 +1,5 @@
 // Initializes the `refresh-token` service on path `/refresh-token`
-const client = require("../../redis");
+const redis = require("../../redis");
 const { RefreshToken } = require("./refresh-token.class");
 const hooks = require("./refresh-token.hooks");
 
@@ -21,7 +21,7 @@ module.exports = function (app) {
           res.clearCookie("rf_token");
           return next();
         }
-        res.cookie("rf_token", await client.get(`token:${req.body._id}`), {
+        res.cookie("rf_token", await redis.get(`token:${req.body._id}`), {
           httpOnly: true,
           secure: false,
           maxAge: 1000 * 3600 * 24 * 365,

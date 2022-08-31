@@ -20,15 +20,14 @@ const assignmentSubmit = require("./assignment-submit/assignment-submit.service.
 const assignmentComment = require("./assignment-comment/assignment-comment.service.js");
 const userCoursePosition = require("./user-course-position/user-course-position.service.js");
 const userRoom = require("./user-room/user-room.service.js");
-const notification = require('./notification/notification.service.js');
-const assignmentContract = require('./assignment-contract/assignment-contract.service.js');
-const userNotification = require('./user-notification/user-notification.service.js');
-const assignmentChat = require('./assignment-chat/assignment-chat.service.js');
-const chatTyping = require('./chat-typing/chat-typing.service.js');
-const joinRoom = require('./join-room/join-room.service.js');
-const exerciseSuggestion = require('./exercise-suggestion/exercise-suggestion.service.js');
-const contractReport = require('./contract-report/contract-report.service.js');
-const scoreHistory = require('./score-history/score-history.service.js');
+const assignmentContract = require("./assignment-contract/assignment-contract.service.js");
+const userNotification = require("./user-notification/user-notification.service.js");
+const assignmentChat = require("./assignment-chat/assignment-chat.service.js");
+const chatTyping = require("./chat-typing/chat-typing.service.js");
+const joinRoom = require("./join-room/join-room.service.js");
+const exerciseSuggestion = require("./exercise-suggestion/exercise-suggestion.service.js");
+const contractReport = require("./contract-report/contract-report.service.js");
+const scoreHistory = require("./score-history/score-history.service.js");
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(users);
@@ -53,7 +52,6 @@ module.exports = function (app) {
   app.configure(assignmentComment);
   app.configure(userCoursePosition);
   app.configure(userRoom);
-  app.configure(notification);
   app.configure(assignmentContract);
   app.configure(userNotification);
   app.configure(assignmentChat);

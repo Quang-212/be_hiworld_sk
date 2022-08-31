@@ -8,8 +8,8 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      owner: { type: Schema.Types.ObjectId, required: true, ref: "users" }, // thong bao nay thuoc ve ai
       sender: { type: Schema.Types.ObjectId, required: true, ref: "users" }, // thong bao duoc gui tu ai
+      owner: { type: Schema.Types.ObjectId, required: true, ref: "users" }, // thong bao nay thuoc ve ai
       type: {
         type: String,
         enum: ["app", "assignment", "course-comment", "lesson-comment"],
@@ -17,9 +17,9 @@ module.exports = function (app) {
       },
       title: { type: String, required: true },
       message: { type: String, required: true },
-      notification: {
+      contract: {
         type: Schema.Types.ObjectId,
-        ref: "notification",
+        ref: "assignment_contract",
       },
       read: { type: Boolean, required: true, default: false },
     },

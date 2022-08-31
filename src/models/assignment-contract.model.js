@@ -10,15 +10,19 @@ module.exports = function (app) {
     {
       sender: { type: Schema.Types.ObjectId, required: true },
       assignment_id: { type: Schema.Types.ObjectId, required: true },
-      exercise_id: { type: Schema.Types.ObjectId, required: true },
+      exercise: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "exercise",
+      },
       status: {
         type: String,
-        enum: ["pending", "progressing", "finished"],
+        enum: ["pending", "progressing", "finished", "timeout"],
         required: true,
         default: "pending",
       },
       is_solved: { type: Boolean, default: false, required: true },
-      accepter: { type: Schema.Types.ObjectId, required: true },
+      helper: { type: Schema.Types.ObjectId, default: null },
       content: { type: String, required: true },
     },
     {

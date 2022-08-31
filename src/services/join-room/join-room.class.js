@@ -1,6 +1,16 @@
 const { isEmpty } = require("lodash");
+const redis = require("../../redis");
 
 /* eslint-disable no-unused-vars */
+const getCurrentMembersCount = (channel) => {
+  return (
+    [
+      ...new Set(
+        channel.connections.map((connection) => connection.user._id.toString())
+      ),
+    ].length || 0
+  );
+};
 exports.JoinRoom = class JoinRoom {
   constructor(options, app) {
     this.options = options || {};
@@ -19,9 +29,10 @@ exports.JoinRoom = class JoinRoom {
   }
 
   async create(data, params) {
+    const existsRoom = redis.exists(`room:${data.room}`);
     return {
       ...data,
-      amount: (await this.app.channel(data.room).length) + 1,
+      amount: getCurrentMembersCount(this.app.channel(data.room)) + 1,
     };
   }
 
@@ -39,7 +50,7 @@ exports.JoinRoom = class JoinRoom {
     }
     return {
       ...params.query,
-      amount: (await this.app.channel(params.query.room).length) - 1,
+      amount: getCurrentMembersCount(this.app.channel(params.query.room)) - 1,
     };
   }
 };
