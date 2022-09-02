@@ -8,17 +8,24 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   after: {
     all: [],
-    find: [],
+    find: [
+      (context) => {
+        if (context.params.query.$limit == 1) {
+          context.result = context.result.data[0] || null;
+        }
+        return context;
+      },
+    ],
     get: [],
     create: [],
     update: [],
     patch: [],
-    remove: []
+    remove: [],
   },
 
   error: {
@@ -28,6 +35,6 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
-}
+    remove: [],
+  },
+};

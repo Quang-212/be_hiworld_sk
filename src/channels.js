@@ -46,7 +46,10 @@ module.exports = function (app) {
     app.channel(leaveRequest.room).leave(context.params.connection);
   });
 
-  app.service("join-room").publish((data) => {
+  app.service("join-room").publish((data) => app.channel(data.room));
+
+  app.service("calling").publish((data) => {
+    console.log(data);
     return app.channel(data.room);
   });
 

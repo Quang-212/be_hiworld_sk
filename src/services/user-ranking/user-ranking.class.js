@@ -7,23 +7,6 @@ exports.UserRanking = class UserRanking extends Service {
     this.app = app;
   }
 
-  async find(params) {
-    try {
-      const { find_type, user } = params.query;
-      if (find_type === "one") {
-        return await this.Model.findOne({
-          user,
-        }).exec();
-      }
-
-      return super.find(params);
-    } catch (error) {
-      return new GeneralError(
-        error?.message || "Xảy ra lỗi hệ thống - Server - Find - UserRanking"
-      );
-    }
-  }
-
   async patch(id, data, params) {
     const { score_type, user } = params.query;
 

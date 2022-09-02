@@ -10,7 +10,7 @@ exports.AssignmentChat = class AssignmentChat extends Service {
     const members = await this.app.channel(
       `assignment-contract:${data.contract_id}`
     ).length;
-    if (members === 1) {
+    if (members < 2) {
       throw new Error("Không có ai trong cuộc trò chuyện!");
     }
     const newMessage = await super.create(data, params);

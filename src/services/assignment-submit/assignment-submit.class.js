@@ -16,17 +16,6 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
     return assignment;
   }
 
-  async find(params) {
-    const { user, exercise, type = "all" } = params.query;
-    if (type === "one") {
-      return await this.Model.findOne({
-        user,
-        exercise,
-      }).populate("exercise");
-    }
-    return super.find(params);
-  }
-
   async patch(id, data, params) {
     const { suggestion_step } = data;
     if (suggestion_step !== undefined) {

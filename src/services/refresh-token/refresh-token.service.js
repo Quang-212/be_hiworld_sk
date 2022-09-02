@@ -22,7 +22,7 @@ module.exports = function (app) {
           return next();
         }
         if (actionChecking(res, "login")) {
-          const token = await client.get(`token:${req.body._id}`);
+          const token = await redis.get(`token:${req.body._id}`);
           token &&
             res.cookie("rf_token", token, {
               httpOnly: true,
