@@ -77,33 +77,6 @@ app.configure(
   })
 );
 app.configure(mongoose);
-// app.configure((app) => {
-//   app.mixins.push(function (service) {
-//     // service.findOne = function (params) {
-//     //   params = params || {}
-//     //   params.query = params.query || {}
-//     //   params.query.$limit = 1
-//     //   return service.find(params).then(function (result) {
-//     //     var data = result.data || result
-//     //     return Array.isArray(data) ? data[0] : data
-//     //   })
-//     // }
-//     service.find = async function (params) {
-//       params = params || {};
-//       params.query = params.query || {};
-//       if (params.query.$limit === 1) {
-//         return service.find(params).then(function (result) {
-//           var data = result.data || result;
-//           return Array.isArray(data) ? data[0] : data;
-//         });
-//       }
-//       return service.find(params).then(function (result) {
-//         return result;
-//       });
-//     };
-//   });
-// });
-
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
 app.configure(authentication);

@@ -11,7 +11,6 @@ module.exports = function (app) {
       exercise_id: { type: Schema.Types.ObjectId, required: true },
       step: { type: Number, required: true },
       step_label: { type: String, required: true },
-      minus_score: { type: Number, required: true },
       content: { type: String, required: true },
       links: { type: Array },
       deleted: { type: Boolean, default: false },

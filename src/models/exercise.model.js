@@ -11,10 +11,14 @@ module.exports = function (app) {
       name: { type: String, required: true },
       search: { type: String, required: true, lowercase: true },
       slug: { type: String, required: true },
-      difficulty: { type: Number, required: true },
+      difficulty: {
+        type: String,
+        enum: ["easy", "medium", "hard"],
+        required: true,
+      },
       type: {
         type: String,
-        enum: ["coding", "quiz", "project"],
+        enum: ["javascript", "task", "quiz", "algorithm"],
         required: true,
       },
       requirement: { type: String, required: true },
@@ -22,7 +26,7 @@ module.exports = function (app) {
       options: { type: String },
       result: { type: String, required: true },
       deleted: { type: Boolean, default: false },
-      plus_score: { type: Number, required: true, default: 5 },
+      plus_score: { type: Number, required: true, default: 100 },
     },
     {
       timestamps: true,

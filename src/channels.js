@@ -39,6 +39,13 @@ module.exports = function (app) {
   app.service("user-notification").publish((data) => app.channel(data.room));
 
   app.service("join-room").on("created", (joinRequest, context) => {
+    // const joined = app
+    //   .channel(joinRequest.room)
+    //   .connections.find(
+    //     (connection) =>
+    //       connection.user._id === context.params.connection.user._id
+    //   );
+    // !joined && app.channel(joinRequest.room).join(context.params.connection);
     app.channel(joinRequest.room).join(context.params.connection);
   });
 
@@ -49,12 +56,10 @@ module.exports = function (app) {
   app.service("join-room").publish((data) => app.channel(data.room));
 
   app.service("calling").publish((data) => {
-    console.log(data);
     return app.channel(data.room);
   });
 
   app.service("assignment-chat").publish((data) => {
-    console.log(data.room);
     return app.channel(data.room);
   });
 
@@ -73,14 +78,12 @@ module.exports = function (app) {
   });
 
   app.service("assignment-comment").on("created", async (data, context) => {
-    console.log("assignment-comment.on", data, context);
     return app
       .channel(`assignment-comment:${data._id.toString()}`)
       .join(context.params.connection);
   });
 
   app.service("assignment-comment").publish("created", async (data) => {
-    console.log("assignment-comment.publish", data);
     return app.channel("authenticated").send({
       ...data,
       user: await app.service("users").get(data.user),

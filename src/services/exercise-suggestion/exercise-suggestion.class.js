@@ -7,47 +7,41 @@ exports.ExerciseSuggestion = class ExerciseSuggestion extends Service {
     this.app = app;
   }
 
-  async get(id, params) {
-    try {
-      const { user_ranking_id, assignment_id } = params.query;
+  // async get(id, params) {
+  //   try {
+  //     const { user_ranking_id, assignment_id } = params.query;
 
-      const [exerciseSuggestion, userScore] = await Promise.all([
-        super.get(id, params),
-        this.app.service("user-ranking").Model.findById(user_ranking_id), //find by id
-      ]);
+  //     const [suggestion, userScore] = await Promise.all([
+  //       super.get(id, params),
+  //       this.app.service("user-ranking").Model.findById(user_ranking_id),  //find by id
+  //     ]);
 
-      if (
-        compareNumber(
-          userScore.score,
-          exerciseSuggestion.minus_score,
-          "lessEqual"
-        )
-      ) {
-        throw new NotAllowed("Bạn không đủ điểm để thực hiện");
-      }
+  //     if (compareNumber(userScore.score, suggestion.minus_score, "lte")) {
+  //       throw new NotAllowed("Bạn không đủ điểm để thực hiện");
+  //     }
 
-      await Promise.all([
-        this.app
-          .service("user-ranking")
-          .Model.findByIdAndUpdate(user_ranking_id, {
-            $inc: { score: -exerciseSuggestion.minus_score },
-          }),
-        this.app
-          .service("assignment-submit")
-          .Model.findByIdAndUpdate(assignment_id, {
-            $inc: {
-              highest_score: -exerciseSuggestion.minus_score,
-              suggestion_step: 1,
-            },
-          }),
-      ]);
+  //     await Promise.all([
+  //       this.app
+  //         .service("user-ranking")
+  //         .Model.findByIdAndUpdate(user_ranking_id, {
+  //           $inc: { score: -suggestion.minus_score },
+  //         }),
+  //       this.app
+  //         .service("assignment-submit")
+  //         .Model.findByIdAndUpdate(assignment_id, {
+  //           $inc: {
+  //             highest_score: -suggestion.minus_score,
+  //             suggestion_step: 1,
+  //           },
+  //         }),
+  //     ]);
 
-      return exerciseSuggestion;
-    } catch (error) {
-      return new GeneralError(
-        error?.message ||
-          "Xảy ra lỗi hệ thống - Server - Get - ExerciseSuggestion"
-      );
-    }
-  }
+  //     return suggestion;
+  //   } catch (error) {
+  //     return new GeneralError(
+  //       error?.message ||
+  //         "Xảy ra lỗi hệ thống - Server - Get - ExerciseSuggestion"
+  //     );
+  //   }
+  // }
 };

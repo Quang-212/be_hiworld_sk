@@ -15,7 +15,7 @@ module.exports = {
     all: [],
     find: [
       (context) => {
-        if (context.params.query.$limit == 1) {
+        if (context.params.query.limit == 1) {
           context.result = context.result.data[0] || null;
         }
         return context;
