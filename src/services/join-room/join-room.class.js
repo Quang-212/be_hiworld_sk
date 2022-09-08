@@ -1,7 +1,5 @@
 const { isEmpty } = require("lodash");
-const redis = require("../../redis");
 
-/* eslint-disable no-unused-vars */
 const getCurrentMembersCount = (channel) => {
   return (
     [
@@ -29,7 +27,6 @@ exports.JoinRoom = class JoinRoom {
   }
 
   async create(data, params) {
-    const existsRoom = redis.exists(`room:${data.room}`);
     return {
       ...data,
       amount: getCurrentMembersCount(this.app.channel(data.room)) + 1,
