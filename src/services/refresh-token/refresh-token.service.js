@@ -26,7 +26,7 @@ module.exports = function (app) {
           secure: false,
           maxAge: 1000 * 3600 * 24 * 365,
           sameSite: "lax",
-          domain: "quatangtaodo.com",
+          domain: "mooly.vn",
         });
         return next();
       } catch (error) {
