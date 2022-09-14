@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-const { google } = require("googleapis");
 const codeContent = require("../../mail-verify");
 const redis = require("../../redis");
 const { NotFound } = require("../../lib/error-handling");
@@ -12,42 +11,32 @@ exports.Mailer = class Mailer {
     const { email } = data;
     const code = Math.random()
       .toString()
-      .slice(2, 2 + 6);
-    // 6 is length of verify code
-    const OAuth2 = google.auth.OAuth2;
-    const OAuth2_client = new OAuth2(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET
-    );
-    OAuth2_client.setCredentials({
-      refresh_token: process.env.GOOGLE_EMAIL_RF_TOKEN,
-    });
-    const accessToken = await OAuth2_client.getAccessToken();
-    const transport = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      service: "Gmail",
-      port: 465,
-      secure: true,
-      auth: {
-        type: "OAuth2",
-        user: process.env.SECRET_EMAIL,
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        refreshToken: process.env.GOOGLE_EMAIL_RF_TOKEN,
-        accessToken: accessToken.token,
-      },
-    });
-    const codeVerifyContent = codeContent(code, email);
+      .slice(2, 2 + 6); // 6 is length of verify code
+
     try {
+      const transport = nodemailer.createTransport({
+        service: "Zoho",
+        host: "smtp.zoho.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: process.env.ZOHO_EMAIL,
+          pass: process.env.ZOHO_PASSWORD,
+        },
+      });
+      const codeVerifyContent = codeContent(code, email);
+
       await transport.sendMail({
-        from: process.env.SECRET_EMAIL,
+        sender: "Mooly",
+        from: process.env.ZOHO_EMAIL_FROM,
         to: email,
-        subject: "Verify message from Education web app",
+        subject: "Verification Email",
         html: codeVerifyContent,
       });
       return await redis.set(`code-${email}`, code, "EX", 60 * 10);
-    } catch (err) {
-      return err;
+    } catch (error) {
+      console.log(error);
+      return error;
     }
   }
   async find(params) {

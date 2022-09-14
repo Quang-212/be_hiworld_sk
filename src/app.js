@@ -32,12 +32,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: [
-      "http://localhost:3039",
-      "http://localhost:3034",
-      "http://34.87.93.1:3060",
-      process.env.SECRET_FRONTEND_DOMAIN,
-    ],
+    origin: [process.env.CLIENT_DOMAIN, process.env.FRONTEND_ADMIN_DOMAIN],
     allowedHeaders: [
       "Content-Type",
       "Origin",

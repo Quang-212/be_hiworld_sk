@@ -30,7 +30,6 @@ module.exports = function (app) {
               maxAge: 1000 * 3600 * 24 * 365,
               sameSite: "lax",
             });
-          return next();
         }
         return next();
       } catch (error) {

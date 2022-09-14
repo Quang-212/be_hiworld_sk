@@ -10,8 +10,8 @@ module.exports = function (app) {
   const mongooseClient = app.get("mongooseClient");
   const schema = new mongooseClient.Schema(
     {
-      googleId: { type: String, default: "" },
-      facebookId: { type: String, default: "" },
+      google_id: { type: String, default: "" },
+      facebook_id: { type: String, default: "" },
       first_name: { type: String, required: true, lowercase: true },
       last_name: { type: String, required: true, lowercase: true },
       search: { type: String, required: true, lowercase: true },

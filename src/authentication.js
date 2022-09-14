@@ -7,6 +7,7 @@ const {
   expressOauth,
   OAuthStrategy,
 } = require("@feathersjs/authentication-oauth");
+const { isEmpty } = require("lodash");
 const { Exist409 } = require("./lib/error-handling");
 
 const existAccountChecking = (rawUserData) => {
@@ -22,29 +23,29 @@ class GoogleStrategy extends OAuthStrategy {
   }
   async getEntityData(profile, entity, params) {
     const baseData = await super.getEntityData(profile, entity, params);
-    if (params?.existUser) {
+    if (!isEmpty(params.existUser)) {
       return baseData;
     }
     return {
       ...baseData,
-      profilePhoto: {
+      profile_photo: {
         url: profile.picture,
       },
-      firstName: profile.given_name,
-      lastName: profile.family_name,
+      first_name: profile.given_name,
+      last_name: profile.family_name,
       email: profile.email,
     };
   }
   async findEntity(profile, params) {
     const entity = await super.findEntity(profile, params);
-    params.existUser = !!entity;
+    params.existUser = entity;
     return entity;
   }
   async updateEntity(entity, profile, params) {
-    if (!params?.existUser?.googleId) {
+    if (!params.existUser?.google_id) {
       return super.updateEntity(entity, profile, params);
     }
-    return params?.existUser;
+    return params.existUser;
   }
 }
 class FacebookStrategy extends OAuthStrategy {
@@ -52,7 +53,7 @@ class FacebookStrategy extends OAuthStrategy {
     const baseData = await super.getEntityData(profile);
     return {
       ...baseData,
-      profilePicture: profile.picture,
+      profile_picture: profile.picture,
       email: profile.email,
     };
   }
@@ -88,6 +89,7 @@ class MyAuthenticationService extends AuthenticationService {
     return authResult;
   }
 }
+
 module.exports = (app) => {
   const authentication = new MyAuthenticationService(app);
 

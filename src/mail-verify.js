@@ -20,7 +20,7 @@ const codeContent = (code, email) => {
         Xin chào ${email}
       </h4>
       <p style="font-size: 18px; color: #757575; margin: 0; text-align: center">
-        Bạn vừa đăng kí tài khoản trên Edutech, <br />
+        Bạn vừa đăng kí tài khoản trên Mooly, <br />
         vui lòng nhập mã để xác thực
       </p>
       <div style="display: flex; justify-content: center;">
@@ -60,7 +60,7 @@ const codeContent = (code, email) => {
         ></div>
       </div>
       <p style="color: #757575; text-align: center; margin: 16px 32px">
-        Bạn không thể đăng nhập Edutech khi chưa xác nhận ở email này
+        Bạn không thể đăng nhập Mooly khi chưa nhập mã này
       </p>
     </div>
   `;
