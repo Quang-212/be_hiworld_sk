@@ -16,14 +16,14 @@ module.exports = function (app) {
       const user = connection.user;
       // The connection is no longer anonymous, remove it
       app.channel("anonymous").leave(connection);
-
       // Add it to the authenticated user channel
-      app.channel("authenticated").join(connection);
       app.channel(`user:${user._id.toString()}`).join(connection);
+
       console.log(app.channel(`authenticated`).length, "authenticated");
       const userRooms = await app
         .service("user-room")
         .Model.find({ user_id: user._id.toString() });
+
       userRooms.forEach(({ room }) => {
         app.channel(room).join(connection);
       });

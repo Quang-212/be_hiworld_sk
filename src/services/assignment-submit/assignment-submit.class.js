@@ -18,7 +18,11 @@ exports.AssignmentSubmit = class AssignmentSubmit extends Service {
 
   async patch(id, data, params) {
     const { suggestion_step } = data;
-    if (suggestion_step !== undefined) {
+    const { patch_type } = params.query;
+    if (patch_type === "call_help") {
+      return this.Model.findByIdAndUpdate(id, { $inc: { suggestion_step: 1 } });
+    }
+    if (suggestion_step) {
       return await this.Model.findByIdAndUpdate(id, data, { new: true }).select(
         "suggestion_step"
       );

@@ -39,15 +39,15 @@ exports.UserNotification = class UserNotification extends Service {
       const { contract_status, owner, type, total_unRead, $limit, $skip } =
         params.query;
 
-      if (total_unRead) {
-        return {
-          total_unRead:
-            (await this.Model.find({
-              owner,
-              read: false,
-            }).countDocuments()) || 0,
-        };
-      }
+      // if (total_unRead) {
+      //   return {
+      //     total_unRead:
+      //       (await this.Model.find({
+      //         owner,
+      //         read: false,
+      //       }).countDocuments()) || 0,
+      //   };
+      // }
 
       if (contract_status && type) {
         const contractsByStatus = await this.app
@@ -63,14 +63,24 @@ exports.UserNotification = class UserNotification extends Service {
         const contractIds = contractsByStatus.map((contract) =>
           contract._id.toString()
         );
+        const [response, total_unRead] = await Promise.all([
+          super.find({
+            ...params,
+            query: {
+              contract: { $in: contractIds },
+              ...params.query,
+            },
+          }),
+          this.Model.find({
+            owner,
+            read: false,
+          }).countDocuments(),
+        ]);
 
-        return super.find({
-          ...params,
-          query: {
-            contract: { $in: contractIds },
-            ...params.query,
-          },
-        });
+        return {
+          ...response,
+          total_unRead,
+        };
       }
 
       return super.find(params);

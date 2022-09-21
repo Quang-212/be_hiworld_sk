@@ -18,7 +18,7 @@
       "audience": "https://mooly.vn",
       "issuer": "feathers",
       "algorithm": "HS256",
-      "expiresIn": "60m"
+      "expiresIn": "30m"
     },
     "local": {
       "usernameField": "email",
