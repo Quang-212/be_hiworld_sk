@@ -27,8 +27,7 @@ exports.Mailer = class Mailer {
       const codeVerifyContent = codeContent(code, email);
 
       await transport.sendMail({
-        sender: "Mooly",
-        from: process.env.ZOHO_EMAIL_FROM,
+        from: `Mooly <${process.env.ZOHO_EMAIL_FROM}>`,
         to: email,
         subject: "Verification Email",
         html: codeVerifyContent,
