@@ -32,13 +32,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: [
-      "http://localhost:3034",
-      "http://localhost:3039",
-      "http://admin.quatangtaodo.com",
-      process.env.SECRET_ADMIN_DOMAIN,
-      process.env.SECRET_FRONTEND_DOMAIN,
-    ],
+    origin: [process.env.CLIENT_DOMAIN, process.env.FRONTEND_ADMIN_DOMAIN],
     allowedHeaders: [
       "Content-Type",
       "Origin",
@@ -78,7 +72,6 @@ app.configure(
   })
 );
 app.configure(mongoose);
-
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
 app.configure(authentication);

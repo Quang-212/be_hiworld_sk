@@ -21,13 +21,17 @@ module.exports = function (app) {
           res.clearCookie("rf_token");
           return next();
         }
-        res.cookie("rf_token", await redis.get(`token:${req.body._id}`), {
-          httpOnly: true,
-          secure: false,
-          maxAge: 1000 * 3600 * 24 * 365,
-          sameSite: "lax",
-          domain: "mooly.vn",
-        });
+        if (actionChecking(res, "login")) {
+          const token = await redis.get(`token:${req.body._id}`);
+          token &&
+            res.cookie("rf_token", token, {
+              httpOnly: true,
+              secure: false,
+              maxAge: 1000 * 3600 * 24 * 365,
+              sameSite: "lax",
+              domain: "mooly.vn",
+            });
+        }
         return next();
       } catch (error) {
         return next(error);

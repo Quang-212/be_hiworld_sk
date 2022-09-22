@@ -4,7 +4,12 @@ exports.Exercise = class Exercise extends Service {
     this.app = app;
   }
   async find(params) {
-    const { lesson, $limit, $skip } = params.query;
+    const { lesson, $limit, $skip, find_type } = params.query;
+
+    if (find_type === "challenge") {
+      return super.find(params);
+    }
+
     const exercises = await super.find(params);
     const lessonExercises = await this.app
       .service("lesson-exercise")

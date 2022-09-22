@@ -37,14 +37,18 @@ exports.Users = class Users extends Service {
   setup(app) {
     this.app = app;
   }
-  async create(data, params) {
+  async create(data = {}, params) {
     const user_id = this.app.get("mongooseClient").Types.ObjectId();
     const user_info_id = this.app.get("mongooseClient").Types.ObjectId();
-    if (data?.googleId || data?.facebookId) {
+    // Oauth create by feathers
+    if (data.googleId || data.facebookId) {
       data = {
         ...data,
-        search: searchString([data.firstName, data.lastName, data.email]),
+        ...(data.googleId && { google_id: data.googleId }),
+        ...(data.facebookId && { facebook_id: data.facebookId }),
+        search: searchString([data.first_name, data.last_name, data.email]),
       };
+
       const [response] = await Promise.all([
         super.create(
           { ...data, user_info: user_info_id, _id: user_id },
@@ -128,10 +132,6 @@ exports.Users = class Users extends Service {
     };
 
     if (data.googleId || data.facebookId) {
-      data = {
-        ...data,
-        // search: searchString([data.firstName, data.lastName, data.email]),
-      };
       return await patchUser(id, data, params);
     }
     const { email } = data;

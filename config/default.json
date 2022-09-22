@@ -9,23 +9,23 @@
   "authentication": {
     "entity": "user",
     "service": "users",
-    "secret": "SECRET_ACCESS_TOKEN",
+    "secret": "ACCESS_TOKEN_HASH",
     "authStrategies": ["jwt", "local"],
     "jwtOptions": {
       "header": {
         "typ": "access"
       },
-      "audience": "https://yourdomain.com",
+      "audience": "https://mooly.vn",
       "issuer": "feathers",
       "algorithm": "HS256",
-      "expiresIn": "60m"
+      "expiresIn": "30m"
     },
     "local": {
       "usernameField": "email",
       "passwordField": "password"
     },
     "oauth": {
-      "redirect": "CLIENT_URL",
+      "redirect": "CLIENT_DOMAIN",
       "auth0": {
         "key": "<auth0 oauth key>",
         "secret": "<auth0 oauth secret>",
